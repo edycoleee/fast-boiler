@@ -1,0 +1,42 @@
+{% set total_pages = ((total + per_page - 1) // per_page) if per_page > 0 else 1 %}
+{% set has_prev = page > 1 %}
+{% set has_next = page < total_pages %}
+{% set prev_page = page - 1 %}
+{% set next_page = page + 1 %}
+{% set full_prev = full_url_prefix ~ '?page=' ~ prev_page ~ '&per_page=' ~ per_page %}
+{% set full_next = full_url_prefix ~ '?page=' ~ next_page ~ '&per_page=' ~ per_page %}
+{% set partial_prev = partial_url_prefix ~ '?page=' ~ prev_page ~ '&per_page=' ~ per_page %}
+{% set partial_next = partial_url_prefix ~ '?page=' ~ next_page ~ '&per_page=' ~ per_page %}
+
+<div class="mt-3 flex flex-wrap items-center justify-between gap-2 text-xs text-muted">
+  <p>Total items: <span class="font-semibold text-text">{{ total }}</span></p>
+  <div class="flex items-center gap-2">
+    {% if has_prev %}
+      <a
+        href="{{ full_prev }}"
+        class="btn-outline"
+        hx-get="{{ partial_prev }}"
+        hx-target="{{ hx_target_id }}"
+        hx-swap="innerHTML"
+      >
+        Prev
+      </a>
+    {% else %}
+      <span class="btn-outline pointer-events-none opacity-50">Prev</span>
+    {% endif %}
+    <p>Page <span class="font-semibold text-text">{{ page }}</span> / <span class="font-semibold text-text">{{ total_pages }}</span></p>
+    {% if has_next %}
+      <a
+        href="{{ full_next }}"
+        class="btn-outline"
+        hx-get="{{ partial_next }}"
+        hx-target="{{ hx_target_id }}"
+        hx-swap="innerHTML"
+      >
+        Next
+      </a>
+    {% else %}
+      <span class="btn-outline pointer-events-none opacity-50">Next</span>
+    {% endif %}
+  </div>
+</div>

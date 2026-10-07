@@ -1,0 +1,65 @@
+{% extends "layouts/admin.html" %}
+{% block title %}{{ "Create" if mode == "create" else "Edit" }} Service{% endblock %}
+{% block content %}
+  {% set page_eyebrow = "Content Management" %}
+  {% set page_title = ("Create Service" if mode == "create" else "Edit Service") %}
+  {% set page_description = "Lengkapi data service agar tampil konsisten pada katalog publik." %}
+  {% include "components/marketing/_page_header.html" %}
+
+  {% if error %}
+    <div class="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{{ error }}</div>
+  {% endif %}
+  <section class="card p-6">
+    <div id="services-autosave-status" class="mb-4 rounded-lg border border-border bg-page px-3 py-2 text-xs text-muted">
+      Autosave aktif · belum ada perubahan.
+    </div>
+    <div id="services-autosave-notice" class="mb-4 hidden rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-800"></div>
+    <form
+      id="services-form"
+      action="{{ action }}"
+      method="post"
+      class="space-y-5"
+      data-mode="{{ mode }}"
+      data-draft-entity-type="services"
+      data-draft-entity-key="{{ mode }}:{{ item.id if item and item.id else 'new' }}"
+      data-slug-source-id="name"
+      data-slug-target-id="slug"
+      data-autosave-notice-id="services-autosave-notice"
+      data-autosave-status-id="services-autosave-status"
+    >
+      <div class="grid gap-5 md:grid-cols-2">
+        <div>
+          <label class="mb-1 block text-sm font-medium" for="name">Name</label>
+          <input id="name" name="name" value="{{ item.name if item else '' }}" class="input-base" required />
+        </div>
+        <div>
+          <label class="mb-1 block text-sm font-medium" for="slug">Slug</label>
+          <input id="slug" name="slug" value="{{ item.slug if item else '' }}" class="input-base font-mono" required />
+        </div>
+      </div>
+      <div>
+        <label class="mb-1 block text-sm font-medium" for="summary">Summary</label>
+        <textarea id="summary" name="summary" class="input-base min-h-24">{{ item.summary if item and item.summary else '' }}</textarea>
+      </div>
+      <div>
+        <label class="mb-1 block text-sm font-medium" for="description">Description</label>
+        <textarea id="description" name="description" class="input-base min-h-56" required>{{ item.description if item else '' }}</textarea>
+      </div>
+      <div class="max-w-56">
+        <label class="mb-1 block text-sm font-medium" for="status">Status</label>
+        <select id="status" name="status" class="input-base">
+          <option value="draft" {% if item and item.status == "draft" %}selected{% endif %}>Draft</option>
+          <option value="published" {% if item and item.status == "published" %}selected{% endif %}>Published</option>
+        </select>
+      </div>
+      <div class="flex flex-wrap items-center gap-2 border-t border-border pt-4">
+        <button type="submit" class="btn-primary">Save Service</button>
+        <a href="/admin/services" class="btn-outline">Cancel</a>
+      </div>
+    </form>
+  </section>
+{% endblock %}
+
+{% block extra_scripts %}
+  <script defer src="/static/js/admin-draft-form.js"></script>
+{% endblock %}

@@ -1,0 +1,24 @@
+<form
+  class="mb-4 flex flex-wrap items-end gap-3 rounded-lg border border-border bg-page px-3 py-3"
+  hx-get="/admin/services/partials/table"
+  hx-target="#services-table-container"
+  hx-swap="innerHTML"
+>
+  <div>
+    <label class="mb-1 block text-xs font-medium uppercase tracking-wide text-muted" for="per_page">Rows per page</label>
+    <select id="per_page" name="per_page" class="input-base min-w-28">
+    <option value="10" {% if (per_page or 10) == 10 %}selected{% endif %}>10</option>
+    <option value="20" {% if (per_page or 10) == 20 %}selected{% endif %}>20</option>
+    <option value="50" {% if (per_page or 10) == 50 %}selected{% endif %}>50</option>
+    </select>
+  </div>
+  <div>
+    <label class="mb-1 block text-xs font-medium uppercase tracking-wide text-muted" for="page">Page</label>
+    <input id="page" name="page" type="number" min="1" value="{{ page if page else 1 }}" class="input-base w-24" />
+  </div>
+  <button type="submit" class="btn-outline">Apply</button>
+</form>
+
+<div id="services-table-container">
+  {% include "admin/services/_table.html" %}
+</div>

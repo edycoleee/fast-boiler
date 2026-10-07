@@ -1,0 +1,56 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --color-page: 248 250 252;
+    --color-surface: 255 255 255;
+    --color-text: 15 23 42;
+    --color-muted: 100 116 139;
+    --color-border: 226 232 240;
+    --color-brand: 37 99 235;
+    --color-brand-foreground: 255 255 255;
+  }
+
+  [data-theme="emerald"] {
+    --color-brand: 5 150 105;
+    --color-brand-foreground: 255 255 255;
+  }
+
+  [data-theme="violet"] {
+    --color-brand: 124 58 237;
+    --color-brand-foreground: 255 255 255;
+  }
+
+  body {
+    @apply bg-page text-text antialiased;
+  }
+}
+
+@layer components {
+  .container-app {
+    @apply mx-auto max-w-6xl px-4;
+  }
+
+  .card {
+    @apply rounded-xl2 border border-border bg-surface p-4 shadow-soft;
+  }
+
+  .btn {
+    @apply inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition;
+  }
+
+  .btn-primary {
+    @apply btn bg-brand text-brand-foreground hover:opacity-90;
+  }
+
+  .btn-outline {
+    @apply btn border border-border bg-white text-text hover:bg-slate-50;
+  }
+
+  .input-base {
+    @apply w-full rounded-lg border border-border px-3 py-2 text-sm outline-none focus:border-brand focus:ring-2 focus:ring-brand/20;
+  }
+}
+

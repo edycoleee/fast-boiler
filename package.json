@@ -1,0 +1,13 @@
+{
+  "name": "fast-boiler-ui",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build:css": "tailwindcss -i ./assets/css/tailwind.css -o ./static/css/app.css --minify",
+    "watch:css": "tailwindcss -i ./assets/css/tailwind.css -o ./static/css/app.css --watch"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.14"
+  }
+}
+

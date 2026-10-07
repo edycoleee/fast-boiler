@@ -1,0 +1,110 @@
+{% extends "layouts/admin.html" %}
+{% block title %}Dashboard Admin{% endblock %}
+{% block content %}
+  {% set page_title = "Dashboard Admin" %}
+  {% set page_description = "Pilih fitur yang ingin Anda kelola setelah login." %}
+  {% include "components/marketing/_page_header.html" %}
+
+  <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+    <a href="/admin/news" class="card p-5 hover:border-brand transition">
+      <h3 class="text-lg font-semibold">CRUD News</h3>
+      <p class="mt-2 text-sm text-muted">Kelola daftar berita, status draft/publish, dan konten detail.</p>
+    </a>
+    <a href="/admin/services" class="card p-5 hover:border-brand transition">
+      <h3 class="text-lg font-semibold">CRUD Services</h3>
+      <p class="mt-2 text-sm text-muted">Kelola layanan publik yang ditampilkan di website.</p>
+    </a>
+    <a href="/admin/media" class="card p-5 hover:border-brand transition">
+      <h3 class="text-lg font-semibold">Upload Media</h3>
+      <p class="mt-2 text-sm text-muted">Upload file dengan validasi tipe dan ukuran sesuai kebijakan.</p>
+    </a>
+    <a href="/admin/canvas" class="card p-5 hover:border-brand transition">
+      <h3 class="text-lg font-semibold">Canvas</h3>
+      <p class="mt-2 text-sm text-muted">Ruang kerja canvas untuk fitur visual/editor berikutnya.</p>
+    </a>
+  </div>
+
+  <section class="card mt-6 p-5">
+    <div class="mb-3 flex items-center justify-between gap-3">
+      <h2 class="text-lg font-semibold">Recent Drafts</h2>
+      <a href="/admin/news/new" class="btn-outline">Create Draft</a>
+    </div>
+    {% if recent_drafts %}
+      <div class="overflow-x-auto rounded-lg border border-border">
+        <table class="min-w-full divide-y divide-border text-sm">
+          <thead class="bg-page">
+            <tr>
+              <th class="px-4 py-3 text-left font-semibold text-muted">Entity</th>
+              <th class="px-4 py-3 text-left font-semibold text-muted">Draft</th>
+              <th class="px-4 py-3 text-left font-semibold text-muted">Updated</th>
+              <th class="px-4 py-3 text-right font-semibold text-muted">Action</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-border bg-surface">
+            {% for draft in recent_drafts %}
+              {% set parts = draft.entity_key.split(':') %}
+              {% set mode = parts[0] if parts|length > 0 else 'create' %}
+              {% set obj_id = parts[1] if parts|length > 1 else 'new' %}
+              {% if draft.entity_type == 'news' %}
+                {% set href = '/admin/news/new' if mode == 'create' else '/admin/news/' ~ obj_id ~ '/edit' %}
+              {% elif draft.entity_type == 'services' %}
+                {% set href = '/admin/services/new' if mode == 'create' else '/admin/services/' ~ obj_id ~ '/edit' %}
+              {% else %}
+                {% set href = '/admin' %}
+              {% endif %}
+              <tr>
+                <td class="px-4 py-3 capitalize">{{ draft.entity_type }}</td>
+                <td class="px-4 py-3">{{ draft.preview_title }}</td>
+                <td class="px-4 py-3 text-xs text-muted">{{ draft.updated_at }}</td>
+                <td class="px-4 py-3">
+                  <div class="flex justify-end">
+                    <a href="{{ href }}" class="btn-outline">Resume</a>
+                  </div>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <p class="text-sm text-muted">Belum ada draft tersimpan.</p>
+    {% endif %}
+  </section>
+
+  <section class="card mt-6 p-5">
+    <div class="mb-3 flex items-center justify-between gap-3">
+      <h2 class="text-lg font-semibold">Recent Canvas Documents</h2>
+      <a href="/admin/canvas" class="btn-outline">Open Canvas</a>
+    </div>
+    {% if recent_canvas_documents %}
+      <div class="overflow-x-auto rounded-lg border border-border">
+        <table class="min-w-full divide-y divide-border text-sm">
+          <thead class="bg-page">
+            <tr>
+              <th class="px-4 py-3 text-left font-semibold text-muted">Document Key</th>
+              <th class="px-4 py-3 text-left font-semibold text-muted">Title</th>
+              <th class="px-4 py-3 text-left font-semibold text-muted">Updated</th>
+              <th class="px-4 py-3 text-right font-semibold text-muted">Action</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-border bg-surface">
+            {% for doc in recent_canvas_documents %}
+              <tr>
+                <td class="px-4 py-3">{{ doc.document_key }}</td>
+                <td class="px-4 py-3">{{ doc.title }}</td>
+                <td class="px-4 py-3 text-xs text-muted">{{ doc.updated_at }}</td>
+                <td class="px-4 py-3">
+                  <div class="flex justify-end">
+                    <a href="/admin/canvas?doc={{ doc.document_key }}" class="btn-outline">Open</a>
+                  </div>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <p class="text-sm text-muted">Belum ada dokumen canvas tersimpan.</p>
+    {% endif %}
+  </section>
+{% endblock %}

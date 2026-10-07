@@ -1,0 +1,65 @@
+{% extends "layouts/admin.html" %}
+{% block title %}{{ "Create" if mode == "create" else "Edit" }} News{% endblock %}
+{% block content %}
+  {% set page_eyebrow = "Content Management" %}
+  {% set page_title = ("Create News" if mode == "create" else "Edit News") %}
+  {% set page_description = "Lengkapi data berita dengan struktur yang konsisten untuk publikasi." %}
+  {% include "components/marketing/_page_header.html" %}
+
+  {% if error %}
+    <div class="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{{ error }}</div>
+  {% endif %}
+  <section class="card p-6">
+    <div id="news-autosave-status" class="mb-4 rounded-lg border border-border bg-page px-3 py-2 text-xs text-muted">
+      Autosave aktif · belum ada perubahan.
+    </div>
+    <div id="news-autosave-notice" class="mb-4 hidden rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-800"></div>
+    <form
+      id="news-form"
+      action="{{ action }}"
+      method="post"
+      class="space-y-5"
+      data-mode="{{ mode }}"
+      data-draft-entity-type="news"
+      data-draft-entity-key="{{ mode }}:{{ item.id if item and item.id else 'new' }}"
+      data-slug-source-id="title"
+      data-slug-target-id="slug"
+      data-autosave-notice-id="news-autosave-notice"
+      data-autosave-status-id="news-autosave-status"
+    >
+      <div class="grid gap-5 md:grid-cols-2">
+        <div>
+          <label class="mb-1 block text-sm font-medium" for="title">Title</label>
+          <input id="title" name="title" value="{{ item.title if item else '' }}" class="input-base" required />
+        </div>
+        <div>
+          <label class="mb-1 block text-sm font-medium" for="slug">Slug</label>
+          <input id="slug" name="slug" value="{{ item.slug if item else '' }}" class="input-base font-mono" required />
+        </div>
+      </div>
+      <div>
+        <label class="mb-1 block text-sm font-medium" for="excerpt">Excerpt</label>
+        <textarea id="excerpt" name="excerpt" class="input-base min-h-24">{{ item.excerpt if item and item.excerpt else '' }}</textarea>
+      </div>
+      <div>
+        <label class="mb-1 block text-sm font-medium" for="content">Content</label>
+        <textarea id="content" name="content" class="input-base min-h-56" required>{{ item.content if item else '' }}</textarea>
+      </div>
+      <div class="max-w-56">
+        <label class="mb-1 block text-sm font-medium" for="status">Status</label>
+        <select id="status" name="status" class="input-base">
+          <option value="draft" {% if item and item.status == "draft" %}selected{% endif %}>Draft</option>
+          <option value="published" {% if item and item.status == "published" %}selected{% endif %}>Published</option>
+        </select>
+      </div>
+      <div class="flex flex-wrap items-center gap-2 border-t border-border pt-4">
+        <button type="submit" class="btn-primary">Save News</button>
+        <a href="/admin/news" class="btn-outline">Cancel</a>
+      </div>
+    </form>
+  </section>
+{% endblock %}
+
+{% block extra_scripts %}
+  <script defer src="/static/js/admin-draft-form.js"></script>
+{% endblock %}

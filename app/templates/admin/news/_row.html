@@ -1,0 +1,26 @@
+{% from "components/status/_macros.html" import render_status_badge %}
+<tr>
+  <td class="whitespace-nowrap px-4 py-3 font-medium text-muted">{{ item.id }}</td>
+  <td class="px-4 py-3">
+    <p class="font-semibold text-text">{{ item.title }}</p>
+    {% if item.excerpt %}
+      <p class="mt-1 text-xs text-muted">{{ item.excerpt }}</p>
+    {% endif %}
+  </td>
+  <td class="whitespace-nowrap px-4 py-3 font-mono text-xs text-muted">{{ item.slug }}</td>
+  <td class="whitespace-nowrap px-4 py-3">
+    {{ render_status_badge(item.status) }}
+  </td>
+  <td class="whitespace-nowrap px-4 py-3">
+    <div class="flex items-center justify-end gap-2">
+      <a href="/news/{{ item.slug }}" class="btn-outline">Preview</a>
+      <form action="/admin/news/{{ item.id }}/duplicate" method="post" style="display:inline;">
+        <button type="submit" class="btn-outline">Duplicate</button>
+      </form>
+      <a href="/admin/news/{{ item.id }}/edit" class="btn-outline">Edit</a>
+      <form action="/admin/news/{{ item.id }}/delete" method="post" style="display:inline;">
+        <button type="submit" class="btn-outline border-red-300 text-red-700 hover:bg-red-50" onclick="return confirm('Hapus news ini?');">Delete</button>
+      </form>
+    </div>
+  </td>
+</tr>

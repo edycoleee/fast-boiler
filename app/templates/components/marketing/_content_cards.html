@@ -1,0 +1,46 @@
+<section class="mb-8 grid gap-6 lg:grid-cols-2">
+  <div>
+    <div class="mb-3 flex items-center justify-between">
+      <h2 class="text-xl font-semibold">Latest News</h2>
+      <a href="/news" class="text-sm text-brand hover:underline">View all</a>
+    </div>
+    <div class="space-y-3">
+      {% if news_items %}
+        {% for item in news_items %}
+          <article class="card">
+            <h3 class="mb-2 text-base font-semibold">{{ item.title }}</h3>
+            <p class="mb-3 text-sm text-muted">
+              {{ item.excerpt if item.excerpt else "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus mattis velit sed nisi aliquet." }}
+            </p>
+            <a href="/news/{{ item.slug }}" class="text-sm text-brand hover:underline">Read more</a>
+          </article>
+        {% endfor %}
+      {% else %}
+        <p class="text-sm text-muted">No news available yet.</p>
+      {% endif %}
+    </div>
+  </div>
+
+  <div>
+    <div class="mb-3 flex items-center justify-between">
+      <h2 class="text-xl font-semibold">Featured Services</h2>
+      <a href="/services" class="text-sm text-brand hover:underline">View all</a>
+    </div>
+    <div class="space-y-3">
+      {% if service_items %}
+        {% for item in service_items %}
+          <article class="card">
+            <h3 class="mb-2 text-base font-semibold">{{ item.name }}</h3>
+            <p class="mb-3 text-sm text-muted">
+              {{ item.summary if item.summary else "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris commodo bibendum dapibus." }}
+            </p>
+            <a href="/services/{{ item.slug }}" class="text-sm text-brand hover:underline">Learn more</a>
+          </article>
+        {% endfor %}
+      {% else %}
+        <p class="text-sm text-muted">No services available yet.</p>
+      {% endif %}
+    </div>
+  </div>
+</section>
+

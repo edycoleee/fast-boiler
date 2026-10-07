@@ -1,0 +1,16 @@
+<section class="mb-8">
+  <div class="mb-3">
+    <h2 class="text-xl font-semibold">Performance Snapshot</h2>
+    <p class="text-sm text-muted">Lorem ipsum metrics for a professional corporate-style landing layout.</p>
+  </div>
+  <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    {% for stat in stats %}
+      <article class="card">
+        <p class="text-sm text-muted">{{ stat.label }}</p>
+        <p class="mt-1 text-2xl font-bold text-brand">{{ stat.value }}</p>
+        <p class="mt-2 text-xs text-muted">{{ stat.description }}</p>
+      </article>
+    {% endfor %}
+  </div>
+</section>
+

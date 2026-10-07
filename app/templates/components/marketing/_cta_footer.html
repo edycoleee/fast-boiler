@@ -1,0 +1,14 @@
+{% set cta_title = cta_title | default("Ready to launch your next app quickly?") %}
+{% set cta_description = cta_description | default("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque habitant morbi tristique senectus et netus et malesuada.") %}
+{% set cta_primary_label = cta_primary_label | default("Access Admin") %}
+{% set cta_primary_href = cta_primary_href | default("/auth/login") %}
+{% set cta_secondary_label = cta_secondary_label | default("Open API Docs") %}
+{% set cta_secondary_href = cta_secondary_href | default("/docs") %}
+<section class="card mb-2 bg-brand text-brand-foreground">
+  <h2 class="mb-2 text-2xl font-bold">{{ cta_title }}</h2>
+  <p class="mb-4 max-w-2xl text-sm text-brand-foreground/90">{{ cta_description }}</p>
+  <div class="flex flex-wrap gap-3">
+    <a href="{{ cta_primary_href }}" class="btn bg-white text-slate-900 hover:bg-slate-100">{{ cta_primary_label }}</a>
+    <a href="{{ cta_secondary_href }}" class="btn border border-white/50 text-white hover:bg-white/10">{{ cta_secondary_label }}</a>
+  </div>
+</section>

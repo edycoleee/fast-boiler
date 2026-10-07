@@ -1,0 +1,13 @@
+Metadata-Version: 2.4
+Name: fast-boiler
+Version: 0.1.0
+Summary: FastAPI boilerplate with modular monolith architecture
+Requires-Python: >=3.11
+Requires-Dist: fastapi>=0.116.0
+Requires-Dist: uvicorn>=0.35.0
+Requires-Dist: sqlalchemy>=2.0.35
+Requires-Dist: jinja2>=3.1.4
+Requires-Dist: python-multipart>=0.0.9
+Requires-Dist: alembic>=1.14.0
+Requires-Dist: itsdangerous>=2.2.0
+Requires-Dist: python-dotenv>=1.0.1

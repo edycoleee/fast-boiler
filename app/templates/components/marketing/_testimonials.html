@@ -1,0 +1,16 @@
+<section class="mb-8">
+  <div class="mb-3">
+    <h2 class="text-xl font-semibold">What Clients Say</h2>
+    <p class="text-sm text-muted">Dummy testimonials to shape a professional enterprise landing section.</p>
+  </div>
+  <div class="grid gap-4 md:grid-cols-3">
+    {% for testimonial in testimonials %}
+      <article class="card">
+        <p class="mb-3 text-sm text-muted">“{{ testimonial.quote }}”</p>
+        <p class="text-sm font-semibold">{{ testimonial.name }}</p>
+        <p class="text-xs text-muted">{{ testimonial.role }}</p>
+      </article>
+    {% endfor %}
+  </div>
+</section>
+

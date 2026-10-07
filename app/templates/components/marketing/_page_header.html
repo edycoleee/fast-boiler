@@ -1,0 +1,13 @@
+{% set page_title = page_title | default("Page Title") %}
+{% set page_description = page_description | default(None) %}
+{% set page_eyebrow = page_eyebrow | default(None) %}
+<section class="mb-8">
+  {% if page_eyebrow %}
+    <p class="mb-2 text-sm font-medium uppercase tracking-wide text-brand">{{ page_eyebrow }}</p>
+  {% endif %}
+  <h1 class="mb-2 text-2xl font-bold">{{ page_title }}</h1>
+  {% if page_description %}
+    <p class="text-sm text-muted">{{ page_description }}</p>
+  {% endif %}
+</section>
+

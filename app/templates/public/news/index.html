@@ -1,0 +1,33 @@
+{% extends "layouts/public.html" %}
+{% from "components/status/_macros.html" import render_status_badge %}
+{% block title %}News - Fast Boiler{% endblock %}
+{% block content %}
+  {% set page_title = "News" %}
+  {% set page_description = "Latest updates, announcements, and editorial highlights." %}
+  {% include "components/marketing/_page_header.html" %}
+
+  <section class="mb-8 space-y-3">
+    {% if items %}
+      {% for item in items %}
+        <article class="card">
+          <div class="flex items-start justify-between gap-3">
+            <h2 class="text-lg font-semibold">
+              <a class="hover:text-brand" href="/news/{{ item.slug }}">{{ item.title }}</a>
+            </h2>
+            {{ render_status_badge(item.status) }}
+          </div>
+        </article>
+      {% endfor %}
+    {% else %}
+      <p class="text-sm text-muted">No news yet.</p>
+    {% endif %}
+  </section>
+
+  {% set cta_title = "Need a robust publishing workflow?" %}
+  {% set cta_description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Manage posts, categories, and updates from the admin panel." %}
+  {% set cta_primary_label = "Login to Dashboard" %}
+  {% set cta_primary_href = "/admin" %}
+  {% set cta_secondary_label = "View API /news" %}
+  {% set cta_secondary_href = "/docs" %}
+  {% include "components/marketing/_cta_footer.html" %}
+{% endblock %}

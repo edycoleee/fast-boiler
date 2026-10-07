@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en" data-theme="default">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{% block title %}Fast Boiler{% endblock %}</title>
+    <style>
+      :root {
+        --color-page: {{ theme_tokens.page }};
+        --color-surface: {{ theme_tokens.surface }};
+        --color-text: {{ theme_tokens.text }};
+        --color-muted: {{ theme_tokens.muted }};
+        --color-border: {{ theme_tokens.border }};
+        --color-brand: {{ theme_tokens.brand }};
+        --color-brand-foreground: {{ theme_tokens.brand_foreground }};
+      }
+    </style>
+    <link rel="stylesheet" href="/static/css/app.css" />
+    <script defer src="/static/js/app.js"></script>
+  </head>
+  <body>
+    <header class="border-b border-border bg-surface/95 backdrop-blur">
+      <nav class="container-app flex items-center justify-between py-4">
+        <div class="flex items-center gap-3 font-semibold">
+          <span class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-brand text-brand-foreground">FB</span>
+          <span>Fast Boiler</span>
+        </div>
+        <div class="flex items-center gap-4 text-sm">
+          <a class="hover:text-brand" href="/news">News</a>
+          <a class="hover:text-brand" href="/services">Services</a>
+          <a class="hover:text-brand" href="/design-system">Design System</a>
+          {% if request.session.get("user_id") %}
+            <a class="btn-outline" href="/admin">Dashboard</a>
+          {% else %}
+            <a class="btn-primary" href="/auth/login">Login</a>
+          {% endif %}
+          <button type="button" class="btn-outline" onclick="window.setTheme('default')">Default</button>
+          <button type="button" class="btn-outline" onclick="window.setTheme('emerald')">Emerald</button>
+          <button type="button" class="btn-outline" onclick="window.setTheme('violet')">Violet</button>
+        </div>
+      </nav>
+    </header>
+    <main class="container-app py-8">
+      {% block content %}{% endblock %}
+    </main>
+  </body>
+</html>

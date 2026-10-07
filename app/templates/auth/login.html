@@ -1,0 +1,26 @@
+{% extends "layouts/public.html" %}
+{% block title %}Login Admin{% endblock %}
+{% block content %}
+  <div class="mx-auto max-w-lg">
+    {% set page_eyebrow = "Admin Access" %}
+    {% set page_title = "Login to Dashboard" %}
+    {% set page_description = "Masuk untuk mengelola konten News, Services, upload media, dan fitur admin lainnya." %}
+    {% include "components/marketing/_page_header.html" %}
+
+    {% if error %}
+      <div class="mb-4 rounded-lg border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-700">{{ error }}</div>
+    {% endif %}
+
+    <form action="/auth/login" method="post" class="card space-y-4 p-6">
+      <div>
+        <label class="mb-1 block text-sm font-medium" for="username">Username</label>
+        <input id="username" name="username" class="input-base" required />
+      </div>
+      <div>
+        <label class="mb-1 block text-sm font-medium" for="password">Password</label>
+        <input id="password" name="password" type="password" class="input-base" required />
+      </div>
+      <button type="submit" class="btn-primary">Login</button>
+    </form>
+  </div>
+{% endblock %}

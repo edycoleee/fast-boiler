@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en" data-theme="default">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{% block title %}Admin - Fast Boiler{% endblock %}</title>
+    <style>
+      :root {
+        --color-page: {{ theme_tokens.page }};
+        --color-surface: {{ theme_tokens.surface }};
+        --color-text: {{ theme_tokens.text }};
+        --color-muted: {{ theme_tokens.muted }};
+        --color-border: {{ theme_tokens.border }};
+        --color-brand: {{ theme_tokens.brand }};
+        --color-brand-foreground: {{ theme_tokens.brand_foreground }};
+      }
+    </style>
+    <link rel="stylesheet" href="/static/css/app.css" />
+    <script src="https://unpkg.com/htmx.org@1.9.12"></script>
+    <script defer src="/static/js/app.js"></script>
+  </head>
+  <body>
+    {% set path = request.url.path %}
+    {% set draft_count = request.state.draft_count if request.state.draft_count is defined else 0 %}
+    <header class="sticky top-0 z-30 border-b border-border bg-surface/95 backdrop-blur">
+      <nav class="container-app py-3">
+        <div class="mb-3 flex flex-wrap items-center justify-between gap-3">
+          <a href="/admin" class="group flex items-center gap-3 font-semibold">
+            <span class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-brand text-brand-foreground">FB</span>
+            <div>
+              <p class="leading-tight">Fast Boiler Admin</p>
+              <p class="text-xs font-normal text-muted">Content Management Console</p>
+            </div>
+          </a>
+
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="rounded-md bg-page px-3 py-1 text-xs text-muted">
+              Signed in as <strong>{{ request.session.get("username", "admin") }}</strong>
+            </span>
+            <a href="/news" class="btn-outline">View Public Site</a>
+            <form action="/auth/logout" method="post" style="display:inline;">
+              <button class="btn-primary" type="submit">Logout</button>
+            </form>
+          </div>
+        </div>
+
+        <div class="hidden items-center justify-between gap-3 border-t border-border pt-3 md:flex">
+          <div class="flex flex-wrap items-center gap-2 text-sm">
+            <a href="/admin" class="rounded-md px-3 py-2 {{ 'bg-brand text-brand-foreground shadow-sm' if path == '/admin' else 'text-muted hover:bg-page hover:text-text' }}">Dashboard</a>
+            <a href="/admin/news" class="rounded-md px-3 py-2 {{ 'bg-brand text-brand-foreground shadow-sm' if path.startswith('/admin/news') else 'text-muted hover:bg-page hover:text-text' }}">News</a>
+            <a href="/admin/services" class="rounded-md px-3 py-2 {{ 'bg-brand text-brand-foreground shadow-sm' if path.startswith('/admin/services') else 'text-muted hover:bg-page hover:text-text' }}">Services</a>
+            <a href="/admin/drafts" class="rounded-md px-3 py-2 {{ 'bg-brand text-brand-foreground shadow-sm' if path.startswith('/admin/drafts') else 'text-muted hover:bg-page hover:text-text' }}">
+              Drafts
+              {% if draft_count > 0 %}
+                <span class="ml-1 inline-flex min-w-5 items-center justify-center rounded-full bg-page px-1.5 py-0.5 text-[11px] font-semibold text-text">{{ draft_count }}</span>
+              {% endif %}
+            </a>
+            <a href="/admin/media" class="rounded-md px-3 py-2 {{ 'bg-brand text-brand-foreground shadow-sm' if path.startswith('/admin/media') else 'text-muted hover:bg-page hover:text-text' }}">Media</a>
+            <a href="/admin/canvas" class="rounded-md px-3 py-2 {{ 'bg-brand text-brand-foreground shadow-sm' if path.startswith('/admin/canvas') else 'text-muted hover:bg-page hover:text-text' }}">Canvas</a>
+          </div>
+          <div class="flex items-center gap-2">
+            <button type="button" class="btn-outline" onclick="window.setTheme('default')">Default</button>
+            <button type="button" class="btn-outline" onclick="window.setTheme('emerald')">Emerald</button>
+            <button type="button" class="btn-outline" onclick="window.setTheme('violet')">Violet</button>
+            <a href="/design-system" class="btn-outline">Design System</a>
+          </div>
+        </div>
+
+        <details class="rounded-lg border border-border bg-page md:hidden">
+          <summary class="cursor-pointer list-none px-4 py-3 text-sm font-medium text-text">Open navigation</summary>
+          <div class="space-y-3 border-t border-border px-4 py-3">
+            <div class="grid gap-2 text-sm">
+              <a href="/admin" class="rounded-md px-3 py-2 {{ 'bg-brand text-brand-foreground' if path == '/admin' else 'text-muted hover:bg-surface hover:text-text' }}">Dashboard</a>
+              <a href="/admin/news" class="rounded-md px-3 py-2 {{ 'bg-brand text-brand-foreground' if path.startswith('/admin/news') else 'text-muted hover:bg-surface hover:text-text' }}">News</a>
+              <a href="/admin/services" class="rounded-md px-3 py-2 {{ 'bg-brand text-brand-foreground' if path.startswith('/admin/services') else 'text-muted hover:bg-surface hover:text-text' }}">Services</a>
+              <a href="/admin/drafts" class="rounded-md px-3 py-2 {{ 'bg-brand text-brand-foreground' if path.startswith('/admin/drafts') else 'text-muted hover:bg-surface hover:text-text' }}">
+                Drafts
+                {% if draft_count > 0 %}
+                  <span class="ml-1 inline-flex min-w-5 items-center justify-center rounded-full bg-page px-1.5 py-0.5 text-[11px] font-semibold text-text">{{ draft_count }}</span>
+                {% endif %}
+              </a>
+              <a href="/admin/media" class="rounded-md px-3 py-2 {{ 'bg-brand text-brand-foreground' if path.startswith('/admin/media') else 'text-muted hover:bg-surface hover:text-text' }}">Media</a>
+              <a href="/admin/canvas" class="rounded-md px-3 py-2 {{ 'bg-brand text-brand-foreground' if path.startswith('/admin/canvas') else 'text-muted hover:bg-surface hover:text-text' }}">Canvas</a>
+              <a href="/design-system" class="rounded-md px-3 py-2 text-muted hover:bg-surface hover:text-text">Design System</a>
+            </div>
+            <div class="flex flex-wrap gap-2">
+              <button type="button" class="btn-outline" onclick="window.setTheme('default')">Default</button>
+              <button type="button" class="btn-outline" onclick="window.setTheme('emerald')">Emerald</button>
+              <button type="button" class="btn-outline" onclick="window.setTheme('violet')">Violet</button>
+            </div>
+          </div>
+        </details>
+      </nav>
+    </header>
+    <main class="container-app py-8">
+      {% block content %}{% endblock %}
+    </main>
+    {% block extra_scripts %}{% endblock %}
+  </body>
+</html>

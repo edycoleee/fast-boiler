@@ -1,0 +1,33 @@
+{% extends "layouts/public.html" %}
+{% from "components/status/_macros.html" import render_status_badge %}
+{% block title %}Services - Fast Boiler{% endblock %}
+{% block content %}
+  {% set page_title = "Services" %}
+  {% set page_description = "Professional offerings showcased in a reusable corporate layout." %}
+  {% include "components/marketing/_page_header.html" %}
+
+  <section class="mb-8 space-y-3">
+    {% if items %}
+      {% for item in items %}
+        <article class="card">
+          <div class="flex items-start justify-between gap-3">
+            <h2 class="text-lg font-semibold">
+              <a class="hover:text-brand" href="/services/{{ item.slug }}">{{ item.name }}</a>
+            </h2>
+            {{ render_status_badge(item.status) }}
+          </div>
+        </article>
+      {% endfor %}
+    {% else %}
+      <p class="text-sm text-muted">No services yet.</p>
+    {% endif %}
+  </section>
+
+  {% set cta_title = "Need to manage your service catalog?" %}
+  {% set cta_description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maintain consistent service data and descriptions from admin." %}
+  {% set cta_primary_label = "Login to Dashboard" %}
+  {% set cta_primary_href = "/admin" %}
+  {% set cta_secondary_label = "View API /services" %}
+  {% set cta_secondary_href = "/docs" %}
+  {% include "components/marketing/_cta_footer.html" %}
+{% endblock %}

@@ -1,0 +1,80 @@
+{% extends "layouts/public.html" %}
+{% from "components/status/_macros.html" import render_status_badge %}
+{% block title %}Design System - Fast Boiler{% endblock %}
+{% block content %}
+  {% set page_eyebrow = "Design System" %}
+  {% set page_title = "UI Components and Theme Tokens" %}
+  {% set page_description = "Semua komponen reusable dan token aktif yang dipakai lintas halaman." %}
+  {% include "components/marketing/_page_header.html" %}
+
+  <section class="mb-8">
+    <h2 class="mb-3 text-xl font-semibold">Active Theme Tokens</h2>
+    <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <article class="card">
+        <p class="text-sm text-muted">Brand</p>
+        <div class="mt-2 h-8 rounded bg-brand"></div>
+        <p class="mt-2 text-xs text-muted">{{ theme_tokens.brand }}</p>
+      </article>
+      <article class="card">
+        <p class="text-sm text-muted">Page</p>
+        <div class="mt-2 h-8 rounded bg-page border border-border"></div>
+        <p class="mt-2 text-xs text-muted">{{ theme_tokens.page }}</p>
+      </article>
+      <article class="card">
+        <p class="text-sm text-muted">Surface</p>
+        <div class="mt-2 h-8 rounded bg-surface border border-border"></div>
+        <p class="mt-2 text-xs text-muted">{{ theme_tokens.surface }}</p>
+      </article>
+      <article class="card">
+        <p class="text-sm text-muted">Text/Muted</p>
+        <div class="mt-2 space-y-1 text-sm">
+          <p class="text-text">Primary text</p>
+          <p class="text-muted">Muted text</p>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section class="mb-8 grid gap-4 md:grid-cols-2">
+    <article class="card">
+      <h2 class="mb-3 text-xl font-semibold">Buttons</h2>
+      <div class="flex flex-wrap gap-3">
+        <button class="btn-primary" type="button">Primary</button>
+        <button class="btn-outline" type="button">Outline</button>
+      </div>
+    </article>
+    <article class="card">
+      <h2 class="mb-3 text-xl font-semibold">Status Badge</h2>
+      <div class="flex gap-3">
+        {{ render_status_badge("draft") }}
+        {{ render_status_badge("published") }}
+        {{ render_status_badge("archived") }}
+      </div>
+    </article>
+  </section>
+
+  <section class="mb-8 card">
+    <h2 class="mb-3 text-xl font-semibold">Form Controls</h2>
+    <div class="grid gap-3 md:grid-cols-2">
+      <div>
+        <label class="mb-1 block text-sm font-medium" for="sample-input">Input</label>
+        <input id="sample-input" class="input-base" placeholder="Lorem ipsum" />
+      </div>
+      <div>
+        <label class="mb-1 block text-sm font-medium" for="sample-select">Select</label>
+        <select id="sample-select" class="input-base">
+          <option>Option A</option>
+          <option>Option B</option>
+        </select>
+      </div>
+    </div>
+  </section>
+
+  {% set cta_title = "Ready to apply this design system?" %}
+  {% set cta_description = "Gunakan komponen yang sama di halaman publik dan admin agar konsisten, cepat, dan mudah maintain." %}
+  {% set cta_primary_label = "Go to Home" %}
+  {% set cta_primary_href = "/" %}
+  {% set cta_secondary_label = "Login to Dashboard" %}
+  {% set cta_secondary_href = "/admin" %}
+  {% include "components/marketing/_cta_footer.html" %}
+{% endblock %}

@@ -1,0 +1,59 @@
+{% extends "layouts/admin.html" %}
+{% block title %}Manage News{% endblock %}
+{% block content %}
+  {% set page_eyebrow = "Content Management" %}
+  {% set page_title = "Manage News" %}
+  {% set page_description = "Kelola artikel, status publikasi, dan operasi edit/delete secara konsisten." %}
+  {% include "components/marketing/_page_header.html" %}
+
+  {% if result == "created" %}
+    <div class="mb-4 rounded-lg border border-emerald-300 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">News berhasil dibuat.</div>
+  {% elif result == "updated" %}
+    <div class="mb-4 rounded-lg border border-emerald-300 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">News berhasil diperbarui.</div>
+  {% elif result == "duplicated" %}
+    <div class="mb-4 rounded-lg border border-blue-300 bg-blue-50 px-4 py-3 text-sm text-blue-800">News berhasil diduplikasi sebagai draft.</div>
+  {% elif result == "deleted" %}
+    <div class="mb-4 rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-800">News berhasil dihapus.</div>
+  {% endif %}
+
+  <section class="card p-5">
+    <div class="mb-4 flex flex-wrap items-center justify-between gap-3 border-b border-border pb-4">
+      <div>
+        <p class="text-sm font-medium text-text">News workspace</p>
+        <p class="text-xs text-muted">Gunakan filter untuk mengatur jumlah data dan lakukan aksi dari tabel di bawah.</p>
+        <div id="news-resume-draft" class="mt-2 hidden rounded-md border border-blue-200 bg-blue-50 px-3 py-2 text-xs text-blue-800"></div>
+      </div>
+      <a href="/admin/news/new" class="btn-primary">+ Create News</a>
+    </div>
+    
+  {% include "admin/news/_filters.html" %}
+  </section>
+{% endblock %}
+
+{% block extra_scripts %}
+  <script>
+    (function () {
+      var holder = document.getElementById("news-resume-draft");
+      if (!holder) return;
+
+      fetch("/api/v1/drafts/recent?limit=1&entity_type=news", { credentials: "same-origin" })
+        .then(function (response) {
+          if (!response.ok) return null;
+          return response.json();
+        })
+        .then(function (body) {
+          if (!body || !body.data || !body.data.length) return;
+          var item = body.data[0];
+          var parts = String(item.entity_key || "").split(":");
+          var mode = parts[0] || "create";
+          var objId = parts[1] || "new";
+          var href = mode === "create" ? "/admin/news/new" : ("/admin/news/" + objId + "/edit");
+          holder.innerHTML = 'Draft tersedia: <strong>' + item.preview_title + '</strong>. <a class="underline font-semibold" href="' + href + '">Lanjutkan edit</a>';
+          holder.classList.remove("hidden");
+        })
+        .catch(function () {
+          // ignore
+        });
+    })();
+  </script>
+{% endblock %}

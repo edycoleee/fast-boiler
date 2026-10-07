@@ -1,0 +1,109 @@
+{% extends "layouts/admin.html" %}
+{% block title %}Manage Drafts{% endblock %}
+{% block content %}
+  {% set page_eyebrow = "Draft Management" %}
+  {% set page_title = "Manage Drafts" %}
+  {% set page_description = "Lihat, lanjutkan, dan hapus draft autosave server-side." %}
+  {% include "components/marketing/_page_header.html" %}
+
+  {% if result == "deleted" %}
+    <div class="mb-4 rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-800">Draft berhasil dihapus.</div>
+  {% elif result == "bulk-deleted" %}
+    <div class="mb-4 rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-800">Draft terpilih berhasil dihapus.</div>
+  {% elif result == "bulk-empty" %}
+    <div class="mb-4 rounded-lg border border-blue-300 bg-blue-50 px-4 py-3 text-sm text-blue-800">Pilih minimal satu draft untuk dihapus.</div>
+  {% endif %}
+
+  <section class="card p-5">
+    <form method="get" action="/admin/drafts" class="mb-4 flex flex-wrap items-end gap-3 rounded-lg border border-border bg-page px-3 py-3">
+      <div class="min-w-40">
+        <label class="mb-1 block text-xs font-medium uppercase tracking-wide text-muted" for="entity_type">Entity Type</label>
+        <select id="entity_type" name="entity_type" class="input-base">
+          <option value="all" {% if entity_type == "all" %}selected{% endif %}>All</option>
+          <option value="news" {% if entity_type == "news" %}selected{% endif %}>News</option>
+          <option value="services" {% if entity_type == "services" %}selected{% endif %}>Services</option>
+        </select>
+      </div>
+      <div class="min-w-40">
+        <label class="mb-1 block text-xs font-medium uppercase tracking-wide text-muted" for="sort">Sort</label>
+        <select id="sort" name="sort" class="input-base">
+          <option value="newest" {% if sort == "newest" %}selected{% endif %}>Newest</option>
+          <option value="oldest" {% if sort == "oldest" %}selected{% endif %}>Oldest</option>
+        </select>
+      </div>
+      <button type="submit" class="btn-outline">Filter</button>
+    </form>
+
+    {% if items %}
+      <form id="bulk-delete-form" action="/admin/drafts/bulk-delete" method="post"></form>
+      <div class="mb-3 flex items-center justify-between gap-2">
+        <p class="text-xs text-muted">Centang draft yang ingin dihapus massal.</p>
+        <button type="submit" form="bulk-delete-form" class="btn-outline border-red-300 text-red-700 hover:bg-red-50" onclick="return confirm('Hapus semua draft terpilih?');">Delete Selected</button>
+      </div>
+      <div class="overflow-x-auto rounded-lg border border-border">
+        <table class="min-w-full divide-y divide-border text-sm">
+          <thead class="bg-page">
+            <tr>
+              <th class="px-4 py-3 text-left font-semibold text-muted">
+                <input id="select-all-drafts" type="checkbox" />
+              </th>
+              <th class="px-4 py-3 text-left font-semibold text-muted">Entity</th>
+              <th class="px-4 py-3 text-left font-semibold text-muted">Draft</th>
+              <th class="px-4 py-3 text-left font-semibold text-muted">Updated</th>
+              <th class="px-4 py-3 text-right font-semibold text-muted">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-border bg-surface">
+            {% for item in items %}
+              {% set parts = item.entity_key.split(':') %}
+              {% set mode = parts[0] if parts|length > 0 else 'create' %}
+              {% set obj_id = parts[1] if parts|length > 1 else 'new' %}
+              {% if item.entity_type == 'news' %}
+                {% set href = '/admin/news/new' if mode == 'create' else '/admin/news/' ~ obj_id ~ '/edit' %}
+              {% elif item.entity_type == 'services' %}
+                {% set href = '/admin/services/new' if mode == 'create' else '/admin/services/' ~ obj_id ~ '/edit' %}
+              {% else %}
+                {% set href = '/admin' %}
+              {% endif %}
+              <tr>
+                <td class="px-4 py-3">
+                  <input class="draft-check-item" form="bulk-delete-form" type="checkbox" name="draft_refs" value="{{ item.entity_type }}::{{ item.entity_key }}" />
+                </td>
+                <td class="px-4 py-3 capitalize">{{ item.entity_type }}</td>
+                <td class="px-4 py-3">{{ item.preview_title }}</td>
+                <td class="px-4 py-3 text-xs text-muted">{{ item.updated_at }}</td>
+                <td class="px-4 py-3">
+                  <div class="flex items-center justify-end gap-2">
+                    <a href="{{ href }}" class="btn-outline">Resume</a>
+                    <form action="/admin/drafts/delete" method="post" style="display:inline;">
+                      <input type="hidden" name="entity_type" value="{{ item.entity_type }}" />
+                      <input type="hidden" name="entity_key" value="{{ item.entity_key }}" />
+                      <button type="submit" class="btn-outline border-red-300 text-red-700 hover:bg-red-50" onclick="return confirm('Hapus draft ini?');">Delete</button>
+                    </form>
+                  </div>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <div class="rounded-lg border border-dashed border-border bg-page px-4 py-8 text-center">
+        <p class="text-sm font-medium text-text">Belum ada draft tersimpan.</p>
+      </div>
+    {% endif %}
+  </section>
+{% endblock %}
+
+{% block extra_scripts %}
+  <script>
+    (function () {
+      var selectAll = document.getElementById("select-all-drafts");
+      if (!selectAll) return;
+      var items = Array.prototype.slice.call(document.querySelectorAll(".draft-check-item"));
+      selectAll.addEventListener("change", function () {
+        items.forEach(function (el) { el.checked = selectAll.checked; });
+      });
+    })();
+  </script>
+{% endblock %}

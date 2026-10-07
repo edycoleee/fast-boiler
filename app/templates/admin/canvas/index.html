@@ -1,0 +1,146 @@
+﻿{% extends "layouts/admin.html" %}
+{% block title %}Canvas{% endblock %}
+{% block content %}
+  {% set page_title = "Canvas" %}
+  {% set page_description = "Canvas 2D dengan panel properti, undo/redo, dan export PNG." %}
+  {% include "components/marketing/_page_header.html" %}
+
+  <div class="grid gap-4 xl:grid-cols-12">
+    <section class="card xl:col-span-9 p-5">
+      <div class="mb-4 rounded-lg border border-border bg-surface px-3 py-3">
+        <div class="flex flex-wrap items-end gap-3">
+        <div class="w-40">
+          <label class="mb-1 block text-sm font-medium" for="tool">Tool</label>
+          <select id="tool" class="input-base">
+            <option value="select">Select</option>
+            <option value="draw">Draw</option>
+            <option value="rect">Rectangle</option>
+            <option value="text">Text</option>
+          </select>
+        </div>
+        <div>
+          <label class="mb-1 block text-sm font-medium" for="stroke-color">Stroke</label>
+          <input id="stroke-color" type="color" class="h-10 w-14 rounded-lg border border-border" value="#1e293b" />
+        </div>
+        <div>
+          <label class="mb-1 block text-sm font-medium" for="line-size">Size</label>
+          <input id="line-size" type="number" min="1" max="48" class="input-base w-24" value="3" />
+        </div>
+        <div class="w-44">
+          <label class="mb-1 block text-sm font-medium" for="canvas-document-select">Document</label>
+          <select id="canvas-document-select" class="input-base"></select>
+        </div>
+        <div class="w-52">
+          <label class="mb-1 block text-sm font-medium" for="canvas-title">Title</label>
+          <input id="canvas-title" class="input-base" value="Main Canvas" />
+        </div>
+        </div>
+        <div class="mt-3 border-t border-border pt-3">
+        <div class="grid gap-2 lg:grid-cols-3">
+          <div class="rounded-lg border border-border bg-page px-2 py-2">
+            <p class="mb-2 text-[11px] font-semibold uppercase tracking-wide text-muted">Document</p>
+            <div class="flex flex-wrap gap-2">
+              <button id="new-canvas-document" type="button" class="btn-outline">New Doc</button>
+              <button id="rename-canvas-document" type="button" class="btn-outline">Rename Doc</button>
+              <button id="delete-canvas-document" type="button" class="btn-outline border-red-300 text-red-700 hover:bg-red-50">Delete Doc</button>
+              <button id="save-canvas-server" type="button" class="btn-outline">Save JSON</button>
+              <button id="load-canvas-server" type="button" class="btn-outline">Load JSON</button>
+            </div>
+          </div>
+          <div class="rounded-lg border border-border bg-page px-2 py-2">
+            <p class="mb-2 text-[11px] font-semibold uppercase tracking-wide text-muted">Edit</p>
+            <div class="flex flex-wrap gap-2">
+              <button id="undo-canvas" type="button" class="btn-outline">Undo</button>
+              <button id="redo-canvas" type="button" class="btn-outline">Redo</button>
+              <button id="delete-selected" type="button" class="btn-outline">Delete Selected</button>
+              <button id="clear-canvas" type="button" class="btn-outline">Clear</button>
+            </div>
+          </div>
+          <div class="rounded-lg border border-border bg-page px-2 py-2">
+            <p class="mb-2 text-[11px] font-semibold uppercase tracking-wide text-muted">Export / Import</p>
+            <div class="flex flex-wrap gap-2">
+              <button id="export-canvas-json" type="button" class="btn-outline">Export JSON</button>
+              <button id="import-canvas-json" type="button" class="btn-outline">Import JSON</button>
+              <button id="download-canvas" type="button" class="btn-primary">Download PNG</button>
+            </div>
+          </div>
+        </div>
+        </div>
+      </div>
+
+      <div class="rounded-xl border border-border bg-surface p-3">
+        <canvas id="editor-canvas" width="1280" height="720" class="w-full rounded-lg bg-white border border-border"></canvas>
+      </div>
+      <div class="mt-3 flex flex-wrap items-center justify-between gap-2">
+        <p class="text-xs text-muted">Tip: pilih Text lalu klik area canvas untuk menempatkan elemen.</p>
+        <p id="canvas-server-status" class="text-xs text-muted">Belum tersimpan ke server.</p>
+      </div>
+    </section>
+
+    <aside class="xl:col-span-3">
+      <div class="space-y-4">
+        <section class="card p-4">
+          <h3 class="mb-3 text-sm font-semibold uppercase tracking-wide text-muted">Properties</h3>
+          <div class="space-y-3">
+            <div>
+              <label class="mb-1 block text-sm font-medium" for="fill-color">Fill Color (Shape)</label>
+              <input id="fill-color" type="color" class="h-10 w-full rounded-lg border border-border" value="#bfdbfe" />
+            </div>
+            <div>
+              <label class="mb-1 block text-sm font-medium" for="font-size">Font Size</label>
+              <input id="font-size" type="number" min="10" max="72" class="input-base" value="24" />
+            </div>
+            <div>
+              <label class="mb-1 block text-sm font-medium" for="text-value">Text Value</label>
+              <input id="text-value" class="input-base" value="Contoh teks" />
+            </div>
+            <div>
+              <label class="mb-1 block text-sm font-medium" for="background-color">Canvas Background</label>
+              <input id="background-color" type="color" class="h-10 w-full rounded-lg border border-border" value="#ffffff" />
+            </div>
+            <button id="apply-bg" type="button" class="btn-outline w-full">Apply Background</button>
+          </div>
+        </section>
+
+        <section class="card p-4">
+          <h3 class="mb-3 text-sm font-semibold uppercase tracking-wide text-muted">Selected Object</h3>
+          <p id="selected-info" class="mb-3 text-xs text-muted">Belum ada objek terpilih.</p>
+          <div class="space-y-3">
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label class="mb-1 block text-xs font-medium" for="sel-x">X</label>
+                <input id="sel-x" type="number" class="input-base" />
+              </div>
+              <div>
+                <label class="mb-1 block text-xs font-medium" for="sel-y">Y</label>
+                <input id="sel-y" type="number" class="input-base" />
+              </div>
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label class="mb-1 block text-xs font-medium" for="sel-w">W</label>
+                <input id="sel-w" type="number" min="1" class="input-base" />
+              </div>
+              <div>
+                <label class="mb-1 block text-xs font-medium" for="sel-h">H</label>
+                <input id="sel-h" type="number" min="1" class="input-base" />
+              </div>
+            </div>
+            <div>
+              <label class="mb-1 block text-xs font-medium" for="sel-text">Text</label>
+              <textarea id="sel-text" class="input-base min-h-20"></textarea>
+            </div>
+            <button id="apply-selected" type="button" class="btn-outline w-full">Apply to Selected</button>
+          </div>
+        </section>
+      </div>
+    </aside>
+  </div>
+{% endblock %}
+
+{% block extra_scripts %}
+  <script>
+    window.__canvasInitialDoc = {{ initial_document_key|tojson }};
+  </script>
+  <script defer src="/static/js/canvas-editor.js"></script>
+{% endblock %}

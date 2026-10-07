@@ -1,0 +1,19 @@
+{% extends "layouts/public.html" %}
+{% block title %}{{ item.name }} - Fast Boiler{% endblock %}
+{% block content %}
+  {% set page_eyebrow = "Service Detail" %}
+  {% set page_title = item.name %}
+  {% set page_description = item.summary if item.summary else "Lorem ipsum dolor sit amet, consectetur adipiscing elit." %}
+  {% include "components/marketing/_page_header.html" %}
+
+  <article class="card mb-8">
+    <div class="mb-4">{{ item.description }}</div>
+    <p><a class="text-sm text-brand hover:underline" href="/services">Back to services</a></p>
+  </article>
+
+  {% set cta_title = "Scale service delivery with reusable modules" %}
+  {% set cta_description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Keep your service pages, admin flows, and APIs in sync." %}
+  {% set cta_primary_label = "Login to Dashboard" %}
+  {% set cta_primary_href = "/admin" %}
+  {% include "components/marketing/_cta_footer.html" %}
+{% endblock %}

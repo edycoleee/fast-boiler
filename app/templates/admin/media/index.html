@@ -1,0 +1,39 @@
+{% extends "layouts/admin.html" %}
+{% block title %}Upload Media{% endblock %}
+{% block content %}
+  {% set page_title = "Upload Media" %}
+  {% set page_description = "Unggah aset file untuk kebutuhan konten admin dengan validasi keamanan dasar." %}
+  {% include "components/marketing/_page_header.html" %}
+
+  {% if success_name %}
+    <div class="mb-4 rounded-lg border border-emerald-300 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
+      Upload berhasil: {{ success_name }}
+    </div>
+  {% endif %}
+
+  {% if error %}
+    <div class="mb-4 rounded-lg border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-700">
+      {{ error }}
+    </div>
+  {% endif %}
+
+  <div class="card p-6">
+    <form action="/admin/media/upload" method="post" enctype="multipart/form-data" class="space-y-4">
+      <div>
+        <label class="mb-2 block text-sm font-medium text-muted" for="file">Pilih file</label>
+        <input
+          id="file"
+          name="file"
+          type="file"
+          class="w-full rounded-lg border border-border bg-white px-3 py-2 text-sm"
+          required
+        />
+      </div>
+      <button type="submit" class="btn-primary">Upload</button>
+      <p class="text-xs text-muted">
+        Gunakan tipe file yang diizinkan environment (contoh default: jpg, png, webp, pdf, txt).
+      </p>
+    </form>
+  </div>
+{% endblock %}
+
