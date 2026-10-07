@@ -90,6 +90,7 @@
       <div class="flex items-center gap-2">
         <button form="logger-bulk-form" type="submit" class="btn-danger" onclick="return confirm('Hapus semua log yang dipilih?');">Delete Selected</button>
         <button form="logger-delete-page-form" type="submit" class="btn-outline" onclick="return confirm('Hapus semua log pada halaman ini?');">Delete This Page</button>
+        <a href="/admin/logger/export.xlsx?q={{ q|default('', true)|urlencode }}&level_filter={{ level_filter|default('', true)|urlencode }}&status_group={{ status_group|default('', true)|urlencode }}&sort={{ sort|default('newest', true)|urlencode }}" class="btn-outline">Export Excel</a>
       </div>
       <p class="text-xs text-muted">Centang baris untuk delete terpilih atau gunakan delete per halaman.</p>
     </div>

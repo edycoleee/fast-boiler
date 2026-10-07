@@ -39,6 +39,7 @@
   </div>
   <button type="submit" class="btn-outline">Apply</button>
   <a href="/admin/news" class="btn-outline">Reset</a>
+  <a href="/admin/news/export.xlsx?q={{ q|default('', true)|urlencode }}&status_filter={{ status_filter|default('', true)|urlencode }}&sort={{ sort|default('created_desc', true)|urlencode }}" class="btn-outline">Export Excel</a>
 </form>
 
 <div id="news-table-container">

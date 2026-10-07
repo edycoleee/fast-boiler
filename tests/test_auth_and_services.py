@@ -65,6 +65,11 @@ def test_login_and_access_admin_pages():
 
         services_response = client.get("/admin/services")
         assert services_response.status_code == 200
+        assert "Table utilities tersedia" in services_response.text
+
+        services_create_response = client.get("/admin/services/new")
+        assert services_create_response.status_code == 200
+        assert "Breadcrumb" in services_create_response.text
 
         drafts_response = client.get("/admin/drafts")
         assert drafts_response.status_code == 200
@@ -84,6 +89,24 @@ def test_login_and_access_admin_pages():
         settings_response = client.get("/admin/settings")
         assert settings_response.status_code == 200
         assert "Branding Guidance" in settings_response.text
+
+
+def test_admin_excel_exports_available():
+    with TestClient(app) as client:
+        login_as_admin(client)
+        export_urls = [
+            "/admin/news/export.xlsx",
+            "/admin/services/export.xlsx",
+            "/admin/drafts/export.xlsx",
+            "/admin/export/recent-drafts.xlsx",
+            "/admin/export/recent-canvas.xlsx",
+        ]
+        for url in export_urls:
+            response = client.get(url)
+            assert response.status_code == 200
+            assert response.headers["content-type"].startswith(
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            )
 
 
 def test_news_admin_prg_create_redirect():

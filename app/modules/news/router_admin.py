@@ -6,6 +6,7 @@ from pydantic import ValidationError
 from sqlalchemy.orm import Session
 
 from app.core.db import get_db
+from app.core.excel import excel_response
 from app.core.templates import templates
 from app.modules.auth.dependencies import require_permission
 from app.modules.media.service import MediaService
@@ -50,6 +51,30 @@ def admin_news_index(
         "sort": sort,
     }
     return templates.TemplateResponse(request=request, name="admin/news/index.html", context=context)
+
+
+@router.get("/export.xlsx")
+def admin_news_export(
+    q: str = Query(default=""),
+    status_filter: str = Query(default="", alias="status_filter"),
+    sort: str = Query(default="created_desc"),
+    service: NewsService = Depends(get_service),
+):
+    items = service.list_news_for_export(
+        q=q,
+        status_filter=status_filter or None,
+        sort=sort,
+    )
+    rows = [
+        [item.id, item.title, item.slug, item.status, item.created_at.isoformat(), item.updated_at.isoformat()]
+        for item in items
+    ]
+    return excel_response(
+        filename_prefix="news-export",
+        sheet_name="News",
+        headers=["ID", "Title", "Slug", "Status", "Created At", "Updated At"],
+        rows=rows,
+    )
 
 
 @router.get("/new")

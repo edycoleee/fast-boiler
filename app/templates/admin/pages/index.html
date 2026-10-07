@@ -5,6 +5,13 @@
   {% set page_title = "Manage Pages" %}
   {% set page_description = "Kelola halaman statis profesional untuk company profile, kebijakan, dan informasi umum." %}
   {% include "components/marketing/_page_header.html" %}
+  {% set breadcrumb_items = [
+    {"label": "Admin", "href": "/admin"},
+    {"label": "Pages", "href": "/admin/pages"}
+  ] %}
+  <div class="mb-4">
+    {% include "components/navigation/_breadcrumb.html" %}
+  </div>
 
   {% if result == "created" %}
     <div class="mb-4 rounded-lg border border-emerald-300 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">Page berhasil dibuat.</div>
@@ -18,7 +25,7 @@
     <div class="mb-4 flex flex-wrap items-center justify-between gap-3 border-b border-border pb-4">
       <div>
         <p class="text-sm font-medium text-text">Pages workspace</p>
-        <p class="text-xs text-muted">Simpan konten halaman statis dengan status draft/published dan slug URL yang rapi.</p>
+        <p class="text-xs text-muted">Simpan konten halaman statis dengan status draft/published dan slug URL yang rapi. Table utilities tersedia untuk seleksi dan visibilitas kolom.</p>
       </div>
       <a href="/admin/pages/new" class="btn-primary">+ Create Page</a>
     </div>
@@ -59,30 +66,47 @@
       </div>
       <button type="submit" class="btn-outline">Apply</button>
       <a href="/admin/pages" class="btn-outline">Reset</a>
+      <a href="/admin/pages/export.xlsx?q={{ q|default('', true)|urlencode }}&status_filter={{ status_filter|default('', true)|urlencode }}&sort={{ sort|default('created_desc', true)|urlencode }}" class="btn-outline">Export Excel</a>
     </form>
 
     {% if items %}
+      {% set toolbar_title = "Pages Table Utilities" %}
+      {% set toolbar_description = "Gunakan select current page untuk menghitung baris terpilih dan atur visibilitas kolom untuk fokus review." %}
+      {% set table_id = "pages-admin-table" %}
+      {% set column_toggles = [
+        {"key": "title", "label": "Title", "visible": true},
+        {"key": "slug", "label": "Slug", "visible": true},
+        {"key": "status", "label": "Status", "visible": true},
+        {"key": "actions", "label": "Action", "visible": true}
+      ] %}
+      <div class="mb-3">
+        {% include "components/data/_table_toolbar.html" %}
+      </div>
       <div class="overflow-x-auto rounded-lg border border-border">
-        <table class="min-w-full divide-y divide-border text-sm">
+        <table id="pages-admin-table" class="min-w-full divide-y divide-border text-sm">
           <thead class="bg-page">
             <tr>
-              <th class="px-4 py-3 text-left font-semibold text-muted">Title</th>
-              <th class="px-4 py-3 text-left font-semibold text-muted">Slug</th>
-              <th class="px-4 py-3 text-left font-semibold text-muted">Status</th>
-              <th class="px-4 py-3 text-right font-semibold text-muted">Action</th>
+              <th class="px-4 py-3 text-left font-semibold text-muted">Select</th>
+              <th class="px-4 py-3 text-left font-semibold text-muted" data-col="title">Title</th>
+              <th class="px-4 py-3 text-left font-semibold text-muted" data-col="slug">Slug</th>
+              <th class="px-4 py-3 text-left font-semibold text-muted" data-col="status">Status</th>
+              <th class="px-4 py-3 text-right font-semibold text-muted" data-col="actions">Action</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-border bg-surface">
             {% for item in items %}
               <tr>
-                <td class="px-4 py-3">{{ item.title }}</td>
-                <td class="px-4 py-3 font-mono text-xs">{{ item.slug }}</td>
                 <td class="px-4 py-3">
+                  <input type="checkbox" data-row-select />
+                </td>
+                <td class="px-4 py-3" data-col="title">{{ item.title }}</td>
+                <td class="px-4 py-3 font-mono text-xs" data-col="slug">{{ item.slug }}</td>
+                <td class="px-4 py-3" data-col="status">
                   <span class="rounded-full px-2 py-1 text-xs {{ 'bg-emerald-100 text-emerald-700' if item.status == 'published' else 'bg-amber-100 text-amber-700' }}">
                     {{ item.status }}
                   </span>
                 </td>
-                <td class="px-4 py-3">
+                <td class="px-4 py-3" data-col="actions">
                   <div class="flex justify-end gap-2">
                     <a href="/pages/{{ item.slug }}" class="btn-outline">View</a>
                     <a href="/admin/pages/{{ item.id }}/edit" class="btn-outline">Edit</a>

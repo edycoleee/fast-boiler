@@ -205,3 +205,13 @@ def test_settings_update_reflects_on_homepage():
         assert body["site_name"] == updated_name
         assert body["site_tagline"] == updated_tagline
         assert body["contact_email"] == updated_email
+
+
+def test_pages_excel_export_available():
+    with TestClient(app) as client:
+        login_as_admin(client)
+        response = client.get("/admin/pages/export.xlsx")
+        assert response.status_code == 200
+        assert response.headers["content-type"].startswith(
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )

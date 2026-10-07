@@ -105,7 +105,8 @@ Reusable FastAPI boilerplate with modular monolith structure and PRG + HTMX + st
   - request log persistence ke database (`request_logs`) dari middleware,
   - admin table (`/admin/logger`) dengan pagination + search + filter level + filter status group,
   - delete per item, delete selected, dan delete current page,
-  - retention cleanup (hapus log lama berdasarkan `keep_days` dan/atau batasi `max_rows`).
+  - retention cleanup (hapus log lama berdasarkan `keep_days` dan/atau batasi `max_rows`),
+  - export Excel dari tabel logger dengan filter aktif.
 
 ## Design system reusable components
 
@@ -131,6 +132,9 @@ Reusable FastAPI boilerplate with modular monolith structure and PRG + HTMX + st
 Applied examples:
 - Admin News memakai breadcrumb + table toolbar utilities (`/admin/news` dan `/admin/news/new`).
 - Admin Settings memakai breadcrumb + tabs guidance (`/admin/settings`).
+- Admin Services memakai breadcrumb + table toolbar utilities (`/admin/services` dan `/admin/services/new`).
+- Admin Pages memakai breadcrumb + table toolbar utilities (`/admin/pages` dan `/admin/pages/new`).
+- Setiap tabel admin utama menyediakan tombol Export Excel (news, services, pages, logger, drafts, dashboard recent drafts/canvas).
 
 ## Environment variables
 

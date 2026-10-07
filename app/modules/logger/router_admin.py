@@ -7,6 +7,7 @@ from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
 
 from app.core.db import get_db
+from app.core.excel import excel_response
 from app.core.templates import templates
 from app.modules.auth.dependencies import require_permission
 from app.modules.logger.repository import LoggerRepository
@@ -80,6 +81,42 @@ def logger_index(
             "keep_days_q": keep_days_q,
             "max_rows_q": max_rows_q,
         },
+    )
+
+
+@router.get("/export.xlsx")
+def logger_export(
+    q: str = Query(default=""),
+    level_filter: str = Query(default=""),
+    status_group: str = Query(default=""),
+    sort: str = Query(default="newest"),
+    service: LoggerService = Depends(get_service),
+):
+    items = service.list_logs_for_export(
+        q=q,
+        level_filter=level_filter or None,
+        status_group=status_group or None,
+        sort=sort,
+    )
+    rows = [
+        [
+            item.id,
+            item.created_at.isoformat(),
+            item.request_id,
+            item.method,
+            item.path,
+            item.status_code,
+            item.level,
+            float(item.duration_ms),
+            item.message,
+        ]
+        for item in items
+    ]
+    return excel_response(
+        filename_prefix="logger-export",
+        sheet_name="RequestLogs",
+        headers=["ID", "Time", "Request ID", "Method", "Path", "Status Code", "Level", "Duration (ms)", "Message"],
+        rows=rows,
     )
 
 

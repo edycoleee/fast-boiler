@@ -1,17 +1,20 @@
 {% from "components/status/_macros.html" import render_status_badge %}
 <tr>
-  <td class="whitespace-nowrap px-4 py-3 font-medium text-muted">{{ item.id }}</td>
-  <td class="px-4 py-3">
+  <td class="whitespace-nowrap px-4 py-3">
+    <input type="checkbox" data-row-select />
+  </td>
+  <td class="whitespace-nowrap px-4 py-3 font-medium text-muted" data-col="id">{{ item.id }}</td>
+  <td class="px-4 py-3" data-col="name">
     <p class="font-semibold text-text">{{ item.name }}</p>
     {% if item.summary %}
       <p class="mt-1 text-xs text-muted">{{ item.summary }}</p>
     {% endif %}
   </td>
-  <td class="whitespace-nowrap px-4 py-3 font-mono text-xs text-muted">{{ item.slug }}</td>
-  <td class="whitespace-nowrap px-4 py-3">
+  <td class="whitespace-nowrap px-4 py-3 font-mono text-xs text-muted" data-col="slug">{{ item.slug }}</td>
+  <td class="whitespace-nowrap px-4 py-3" data-col="status">
     {{ render_status_badge(item.status) }}
   </td>
-  <td class="whitespace-nowrap px-4 py-3">
+  <td class="whitespace-nowrap px-4 py-3" data-col="actions">
     <div class="flex items-center justify-end gap-2">
       <a href="/services/{{ item.slug }}" class="btn-outline">Preview</a>
       <form action="/admin/services/{{ item.id }}/duplicate" method="post" style="display:inline;">

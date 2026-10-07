@@ -5,6 +5,7 @@ from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
 
 from app.core.db import get_db
+from app.core.excel import excel_response
 from app.core.templates import templates
 from app.modules.auth.dependencies import require_admin_session
 from app.modules.drafts.repository import DraftRepository
@@ -36,6 +37,25 @@ def drafts_index(
         request=request,
         name="admin/drafts/index.html",
         context={"items": items, "entity_type": entity_type, "sort": sort, "result": result},
+    )
+
+
+@router.get("/export.xlsx")
+def drafts_export(
+    request: Request,
+    entity_type: str = Query(default="all"),
+    sort: str = Query(default="newest", pattern="^(newest|oldest)$"),
+    service: DraftService = Depends(get_service),
+):
+    user_id = int(request.session.get("user_id"))
+    normalized_entity_type = None if entity_type == "all" else entity_type
+    items = service.list_for_user(user_id=user_id, limit=2000, entity_type=normalized_entity_type, sort=sort)
+    rows = [[item.entity_type, item.entity_key, item.preview_title, item.updated_at.isoformat()] for item in items]
+    return excel_response(
+        filename_prefix="drafts-export",
+        sheet_name="Drafts",
+        headers=["Entity Type", "Entity Key", "Draft Title", "Updated At"],
+        rows=rows,
     )
 
 

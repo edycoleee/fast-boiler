@@ -33,6 +33,26 @@ class ServicesService:
         )
         return items, total, safe_page, safe_per_page
 
+    def list_services_for_export(
+        self,
+        *,
+        q: str | None = None,
+        status_filter: str | None = None,
+        sort: str = "created_desc",
+        max_items: int = 5000,
+    ):
+        safe_sort = sort if sort in {"created_desc", "created_asc", "name_asc", "name_desc"} else "created_desc"
+        safe_status = status_filter if status_filter in {"draft", "published"} else None
+        safe_limit = min(max(1, max_items), 10000)
+        items, _total = self.repository.list_all(
+            offset=0,
+            limit=safe_limit,
+            q=q,
+            status_filter=safe_status,
+            sort=safe_sort,
+        )
+        return items
+
     def get_service_by_id(self, item_id: int):
         item = self.repository.get_by_id(item_id)
         if item is None:

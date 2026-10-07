@@ -137,6 +137,16 @@ def test_logger_filter_by_level_and_status_group():
         assert warning_request_id in warning_page.text
 
 
+def test_logger_excel_export_available():
+    with TestClient(app) as client:
+        login_as_admin(client)
+        response = client.get("/admin/logger/export.xlsx")
+        assert response.status_code == 200
+        assert response.headers["content-type"].startswith(
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
+
+
 def test_logger_retention_cleanup_with_keep_days():
     with TestClient(app) as client:
         login_as_admin(client)

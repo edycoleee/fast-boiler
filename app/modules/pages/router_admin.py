@@ -6,6 +6,7 @@ from pydantic import ValidationError
 from sqlalchemy.orm import Session
 
 from app.core.db import get_db
+from app.core.excel import excel_response
 from app.core.templates import templates
 from app.modules.auth.dependencies import require_permission
 from app.modules.pages.repository import PagesRepository
@@ -50,6 +51,30 @@ def admin_pages_index(
             "status_filter": status_filter,
             "sort": sort,
         },
+    )
+
+
+@router.get("/export.xlsx")
+def admin_pages_export(
+    q: str = Query(default=""),
+    status_filter: str = Query(default="", alias="status_filter"),
+    sort: str = Query(default="created_desc"),
+    service: PagesService = Depends(get_service),
+):
+    items = service.list_pages_for_export(
+        q=q,
+        status_filter=status_filter or None,
+        sort=sort,
+    )
+    rows = [
+        [item.id, item.title, item.slug, item.status, item.created_at.isoformat(), item.updated_at.isoformat()]
+        for item in items
+    ]
+    return excel_response(
+        filename_prefix="pages-export",
+        sheet_name="Pages",
+        headers=["ID", "Title", "Slug", "Status", "Created At", "Updated At"],
+        rows=rows,
     )
 
 

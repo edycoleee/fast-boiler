@@ -5,6 +5,13 @@
   {% set page_title = "Manage Services" %}
   {% set page_description = "Kelola katalog layanan dan status publikasinya untuk halaman publik." %}
   {% include "components/marketing/_page_header.html" %}
+  {% set breadcrumb_items = [
+    {"label": "Admin", "href": "/admin"},
+    {"label": "Services", "href": "/admin/services"}
+  ] %}
+  <div class="mb-4">
+    {% include "components/navigation/_breadcrumb.html" %}
+  </div>
 
   {% if result == "created" %}
     <div class="mb-4 rounded-lg border border-emerald-300 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">Service berhasil dibuat.</div>
@@ -20,7 +27,7 @@
     <div class="mb-4 flex flex-wrap items-center justify-between gap-3 border-b border-border pb-4">
       <div>
         <p class="text-sm font-medium text-text">Services workspace</p>
-        <p class="text-xs text-muted">Atur katalog layanan dan lakukan aksi langsung dari tabel.</p>
+        <p class="text-xs text-muted">Atur katalog layanan dan lakukan aksi langsung dari tabel. Table utilities tersedia untuk seleksi dan visibilitas kolom.</p>
         <div id="services-resume-draft" class="mt-2 hidden rounded-md border border-blue-200 bg-blue-50 px-3 py-2 text-xs text-blue-800"></div>
       </div>
       <a href="/admin/services/new" class="btn-primary">+ Create Service</a>

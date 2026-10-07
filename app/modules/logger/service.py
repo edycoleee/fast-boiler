@@ -56,6 +56,29 @@ class LoggerService:
         )
         return items, total, safe_page, safe_per_page, safe_sort, safe_level, safe_status_group
 
+    def list_logs_for_export(
+        self,
+        *,
+        q: str | None = None,
+        level_filter: str | None = None,
+        status_group: str | None = None,
+        sort: str = "newest",
+        max_items: int = 5000,
+    ):
+        safe_sort = sort if sort in {"newest", "oldest"} else "newest"
+        safe_level = level_filter if level_filter in {"INFO", "WARNING", "ERROR"} else ""
+        safe_status_group = status_group if status_group in {"2xx", "4xx", "5xx"} else ""
+        safe_limit = min(max(1, max_items), 10000)
+        items, _total = self.repository.list_logs(
+            offset=0,
+            limit=safe_limit,
+            q=q,
+            level_filter=safe_level or None,
+            status_group=safe_status_group or None,
+            sort=safe_sort,
+        )
+        return items
+
     def delete_one(self, log_id: int) -> int:
         return self.repository.delete_one(log_id)
 

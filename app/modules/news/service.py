@@ -33,6 +33,26 @@ class NewsService:
         )
         return items, total, safe_page, safe_per_page
 
+    def list_news_for_export(
+        self,
+        *,
+        q: str | None = None,
+        status_filter: str | None = None,
+        sort: str = "created_desc",
+        max_items: int = 5000,
+    ):
+        safe_sort = sort if sort in {"created_desc", "created_asc", "title_asc", "title_desc"} else "created_desc"
+        safe_status = status_filter if status_filter in {"draft", "published"} else None
+        safe_limit = min(max(1, max_items), 10000)
+        items, _total = self.repository.list_all(
+            offset=0,
+            limit=safe_limit,
+            q=q,
+            status_filter=safe_status,
+            sort=safe_sort,
+        )
+        return items
+
     def get_news_by_id(self, news_id: int):
         model = self.repository.get_by_id(news_id)
         if model is None:

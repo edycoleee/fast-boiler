@@ -39,7 +39,10 @@
   <section class="card mt-6 p-5">
     <div class="mb-3 flex items-center justify-between gap-3">
       <h2 class="text-lg font-semibold">Recent Drafts</h2>
-      <a href="/admin/news/new" class="btn-outline">Create Draft</a>
+      <div class="flex items-center gap-2">
+        <a href="/admin/export/recent-drafts.xlsx" class="btn-outline">Export Excel</a>
+        <a href="/admin/news/new" class="btn-outline">Create Draft</a>
+      </div>
     </div>
     {% if recent_drafts %}
       <div class="overflow-x-auto rounded-lg border border-border">
@@ -86,7 +89,10 @@
   <section class="card mt-6 p-5">
     <div class="mb-3 flex items-center justify-between gap-3">
       <h2 class="text-lg font-semibold">Recent Canvas Documents</h2>
-      <a href="/admin/canvas" class="btn-outline">Open Canvas</a>
+      <div class="flex items-center gap-2">
+        <a href="/admin/export/recent-canvas.xlsx" class="btn-outline">Export Excel</a>
+        <a href="/admin/canvas" class="btn-outline">Open Canvas</a>
+      </div>
     </div>
     {% if recent_canvas_documents %}
       <div class="overflow-x-auto rounded-lg border border-border">
