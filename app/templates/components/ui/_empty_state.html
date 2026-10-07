@@ -1,0 +1,6 @@
+{% set empty_title = empty_title | default("No data found.") %}
+{% set empty_description = empty_description | default("Try changing filters or create a new item.") %}
+<div class="rounded-lg border border-dashed border-border bg-page px-4 py-8 text-center">
+  <p class="text-sm font-medium text-text">{{ empty_title }}</p>
+  <p class="mt-1 text-xs text-muted">{{ empty_description }}</p>
+</div>

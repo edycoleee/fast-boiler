@@ -1,0 +1,19 @@
+{% set timeline_title = timeline_title | default("Timeline item") %}
+{% set timeline_meta = timeline_meta | default("") %}
+{% set timeline_description = timeline_description | default("") %}
+{% set timeline_badge = timeline_badge | default("") %}
+{% set timeline_badge_class = timeline_badge_class | default("bg-slate-100 text-slate-700") %}
+<div class="space-y-1">
+  <div class="flex flex-wrap items-center gap-2">
+    <p class="font-medium text-text">{{ timeline_title }}</p>
+    {% if timeline_badge %}
+      <span class="rounded-full px-2 py-0.5 text-xs {{ timeline_badge_class }}">{{ timeline_badge }}</span>
+    {% endif %}
+  </div>
+  {% if timeline_meta %}
+    <p class="font-mono text-xs text-muted">{{ timeline_meta }}</p>
+  {% endif %}
+  {% if timeline_description %}
+    <p class="text-xs text-muted">{{ timeline_description }}</p>
+  {% endif %}
+</div>

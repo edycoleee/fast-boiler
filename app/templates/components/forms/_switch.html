@@ -1,0 +1,17 @@
+{% set switch_id = switch_id | default("switch-1") %}
+{% set switch_name = switch_name | default(switch_id) %}
+{% set switch_label = switch_label | default("Enable option") %}
+{% set switch_checked = switch_checked | default(false) %}
+{% set switch_help = switch_help | default("") %}
+<div>
+  <label class="inline-flex cursor-pointer items-center gap-3" for="{{ switch_id }}">
+    <input id="{{ switch_id }}" name="{{ switch_name }}" type="checkbox" class="peer sr-only" {% if switch_checked %}checked{% endif %} />
+    <span class="relative h-6 w-11 rounded-full bg-slate-300 transition peer-checked:bg-brand peer-focus:ring-2 peer-focus:ring-brand/30">
+      <span class="absolute left-0.5 top-0.5 h-5 w-5 rounded-full bg-white transition peer-checked:translate-x-5"></span>
+    </span>
+    <span class="text-sm">{{ switch_label }}</span>
+  </label>
+  {% if switch_help %}
+    <p class="mt-1 text-xs text-muted">{{ switch_help }}</p>
+  {% endif %}
+</div>

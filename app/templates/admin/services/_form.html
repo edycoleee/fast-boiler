@@ -58,8 +58,13 @@
       </div>
     </form>
   </section>
+  <div class="mt-4">
+    {% set media_picker_target_input_id = "description" %}
+    {% include "components/media/_picker.html" %}
+  </div>
 {% endblock %}
 
 {% block extra_scripts %}
   <script defer src="/static/js/admin-draft-form.js"></script>
+  <script defer src="/static/js/media-picker.js"></script>
 {% endblock %}

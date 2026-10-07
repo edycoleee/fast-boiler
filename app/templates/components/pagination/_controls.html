@@ -3,10 +3,11 @@
 {% set has_next = page < total_pages %}
 {% set prev_page = page - 1 %}
 {% set next_page = page + 1 %}
-{% set full_prev = full_url_prefix ~ '?page=' ~ prev_page ~ '&per_page=' ~ per_page %}
-{% set full_next = full_url_prefix ~ '?page=' ~ next_page ~ '&per_page=' ~ per_page %}
-{% set partial_prev = partial_url_prefix ~ '?page=' ~ prev_page ~ '&per_page=' ~ per_page %}
-{% set partial_next = partial_url_prefix ~ '?page=' ~ next_page ~ '&per_page=' ~ per_page %}
+{% set extra_query = extra_query if extra_query is defined else '' %}
+{% set full_prev = full_url_prefix ~ '?page=' ~ prev_page ~ '&per_page=' ~ per_page ~ extra_query %}
+{% set full_next = full_url_prefix ~ '?page=' ~ next_page ~ '&per_page=' ~ per_page ~ extra_query %}
+{% set partial_prev = partial_url_prefix ~ '?page=' ~ prev_page ~ '&per_page=' ~ per_page ~ extra_query %}
+{% set partial_next = partial_url_prefix ~ '?page=' ~ next_page ~ '&per_page=' ~ per_page ~ extra_query %}
 
 <div class="mt-3 flex flex-wrap items-center justify-between gap-2 text-xs text-muted">
   <p>Total items: <span class="font-semibold text-text">{{ total }}</span></p>

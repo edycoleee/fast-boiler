@@ -1,0 +1,27 @@
+{% set radio_name = radio_name | default("radio-group") %}
+{% set radio_label = radio_label | default("Radio group") %}
+{% set radio_options = radio_options | default([]) %}
+{% set radio_selected = radio_selected | default("") %}
+{% set radio_help = radio_help | default("") %}
+<fieldset>
+  <legend class="mb-1 text-sm font-medium">{{ radio_label }}</legend>
+  <div class="flex flex-wrap gap-4">
+    {% for option in radio_options %}
+      {% set option_id = radio_name ~ '-' ~ loop.index %}
+      <label class="inline-flex cursor-pointer items-center gap-2 text-sm" for="{{ option_id }}">
+        <input
+          id="{{ option_id }}"
+          name="{{ radio_name }}"
+          type="radio"
+          value="{{ option.value }}"
+          class="h-4 w-4 border-border text-brand focus:ring-brand/30"
+          {% if option.value == radio_selected %}checked{% endif %}
+        />
+        <span>{{ option.label }}</span>
+      </label>
+    {% endfor %}
+  </div>
+  {% if radio_help %}
+    <p class="mt-1 text-xs text-muted">{{ radio_help }}</p>
+  {% endif %}
+</fieldset>

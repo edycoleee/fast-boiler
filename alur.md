@@ -33,7 +33,7 @@ Untuk menjaga clean code, maintenance mudah, dan mencegah file membengkak, boile
 - [x] Konfigurasi aplikasi berbasis environment (`APP_NAME`, `BASE_URL`, `DB_URL`, `SECRET_KEY`).
 - [x] Inisialisasi DB dan migration tidak bergantung nama domain tertentu.
 - [x] Error handling (404/500) generik dan reusable.
-- [ ] Logging dasar aktif (request/error), tanpa pesan hardcoded domain.
+- [x] Logging dasar aktif (request/error), tanpa pesan hardcoded domain.
 
 ### 1.2 Boleh Spesifik Domain
 - [ ] Nama proyek akhir.
@@ -45,11 +45,11 @@ Untuk menjaga clean code, maintenance mudah, dan mencegah file membengkak, boile
 
 ### 2.1 Wajib Generik
 - [x] Design tokens netral: color, spacing, typography, radius, shadow.
-- [ ] Komponen atomik reusable: button, input, select, textarea, badge, alert.
-- [ ] Komponen komposit reusable: table, modal, pagination, navbar, footer.
-- [ ] Semua state tersedia: hover, focus, disabled, loading, error, empty.
+- [x] Komponen atomik reusable: button, input, select, textarea, badge, alert.
+- [x] Komponen komposit reusable: table, modal, pagination, navbar, footer.
+- [x] Semua state tersedia: hover, focus, disabled, loading, error, empty.
 - [x] Komponen di `/design-system` berasal dari komponen asli yang dipakai aplikasi.
-- [ ] Tidak ada label domain hardcoded pada komponen (mis. nama institusi di komponen umum).
+- [x] Tidak ada label domain hardcoded pada komponen (mis. nama institusi di komponen umum).
 
 ### 2.2 Boleh Spesifik Domain
 - [ ] Palet brand (warna primer/sekunder proyek).
@@ -92,7 +92,7 @@ Untuk menjaga clean code, maintenance mudah, dan mencegah file membengkak, boile
 ## 5) Modul CMS
 
 ### 5.1 Wajib Generik
-- [ ] Modul konten generik tersedia: Page, Post/News, Media, Settings.
+- [x] Modul konten generik tersedia: Page, Post/News, Media, Settings.
 - [x] CRUD pattern seragam (list/create/edit/delete + validasi + feedback).
 - [x] Query database ditempatkan di repository, bukan di router.
 - [x] Business rules ditempatkan di service, bukan di router/template.
@@ -124,7 +124,7 @@ Untuk menjaga clean code, maintenance mudah, dan mencegah file membengkak, boile
 - [x] Validasi tipe file dan ukuran file.
 - [x] Penamaan file aman/unik.
 - [x] Path upload configurable.
-- [ ] Komponen media picker reusable lintas modul.
+- [x] Komponen media picker reusable lintas modul.
 
 ### 7.2 Boleh Spesifik Domain
 - [ ] Kategori folder media spesifik use case.
@@ -157,7 +157,7 @@ Untuk menjaga clean code, maintenance mudah, dan mencegah file membengkak, boile
 - [x] Satu pola endpoint konsisten: `index`, `create`, `store`, `edit`, `update`, `delete`.
 - [x] Form schema/validator dipisah dari router agar mudah dipakai lintas modul.
 - [x] Komponen partial wajib tersedia: `_table.html`, `_row.html`, `_form.html`, `_filters.html`.
-- [ ] Fitur default di semua modul CRUD: search, sort, pagination, filter status.
+- [x] Fitur default di semua modul CRUD: search, sort, pagination, filter status.
 - [x] Umpan balik seragam: success/error flash atau toast, format pesan konsisten.
 - [x] Soft delete atau hard delete ditetapkan jelas per modul.
 - [x] Audit minimum: `created_at`, `updated_at`, `created_by`, `updated_by`.

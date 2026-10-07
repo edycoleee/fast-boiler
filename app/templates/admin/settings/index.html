@@ -1,0 +1,35 @@
+{% extends "layouts/admin.html" %}
+{% block title %}Site Settings{% endblock %}
+{% block content %}
+  {% set page_eyebrow = "Configuration" %}
+  {% set page_title = "Site Settings" %}
+  {% set page_description = "Atur identitas utama website agar konsisten di landing page dan halaman publik." %}
+  {% include "components/marketing/_page_header.html" %}
+
+  {% if result == "updated" %}
+    <div class="mb-4 rounded-lg border border-emerald-300 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">Pengaturan berhasil diperbarui.</div>
+  {% endif %}
+  {% if error %}
+    <div class="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{{ error }}</div>
+  {% endif %}
+
+  <section class="card p-6">
+    <form action="/admin/settings" method="post" class="space-y-5">
+      <div>
+        <label class="mb-1 block text-sm font-medium" for="site_name">Site Name</label>
+        <input id="site_name" name="site_name" class="input-base" value="{{ values.site_name }}" required />
+      </div>
+      <div>
+        <label class="mb-1 block text-sm font-medium" for="site_tagline">Site Tagline</label>
+        <textarea id="site_tagline" name="site_tagline" class="input-base min-h-24" required>{{ values.site_tagline }}</textarea>
+      </div>
+      <div>
+        <label class="mb-1 block text-sm font-medium" for="contact_email">Contact Email</label>
+        <input id="contact_email" type="email" name="contact_email" class="input-base" value="{{ values.contact_email }}" required />
+      </div>
+      <div class="flex flex-wrap items-center gap-2 border-t border-border pt-4">
+        <button type="submit" class="btn-primary">Save Settings</button>
+      </div>
+    </form>
+  </section>
+{% endblock %}

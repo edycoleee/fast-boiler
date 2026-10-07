@@ -8,11 +8,13 @@ from sqlalchemy.orm import Session
 from app.core.db import get_db
 from app.core.templates import templates
 from app.modules.auth.dependencies import require_permission
+from app.modules.media.service import MediaService
 from app.modules.news.repository import NewsRepository
 from app.modules.news.schemas import NewsCreate, NewsUpdate
 from app.modules.news.service import NewsService
 
 router = APIRouter(prefix="/admin/news", tags=["news-admin"], dependencies=[Depends(require_permission("news.manage"))])
+media_service = MediaService()
 
 
 def get_service(db: Session = Depends(get_db)) -> NewsService:
@@ -24,20 +26,39 @@ def admin_news_index(
     request: Request,
     page: int = Query(default=1, ge=1),
     per_page: int = Query(default=10, ge=1, le=100),
+    q: str = Query(default=""),
+    status_filter: str = Query(default="", alias="status_filter"),
+    sort: str = Query(default="created_desc"),
     result: str | None = Query(default=None),
     service: NewsService = Depends(get_service),
 ):
-    items, total, page, per_page = service.list_news(page=page, per_page=per_page)
-    context = {"items": items, "total": total, "page": page, "per_page": per_page, "result": result}
+    items, total, page, per_page = service.list_news(
+        page=page,
+        per_page=per_page,
+        q=q,
+        status_filter=status_filter or None,
+        sort=sort,
+    )
+    context = {
+        "items": items,
+        "total": total,
+        "page": page,
+        "per_page": per_page,
+        "result": result,
+        "q": q,
+        "status_filter": status_filter,
+        "sort": sort,
+    }
     return templates.TemplateResponse(request=request, name="admin/news/index.html", context=context)
 
 
 @router.get("/new")
 def admin_news_new(request: Request):
+    recent_media = media_service.list_recent_files(limit=20)
     return templates.TemplateResponse(
         request=request,
         name="admin/news/_form.html",
-        context={"mode": "create", "action": "/admin/news", "item": None},
+        context={"mode": "create", "action": "/admin/news", "item": None, "recent_media": recent_media},
     )
 
 
@@ -62,6 +83,7 @@ def admin_news_create(
             "action": "/admin/news",
             "item": {"title": title, "slug": slug, "excerpt": excerpt, "content": content, "status": status_value},
             "error": error_message,
+            "recent_media": media_service.list_recent_files(limit=20),
         }
         return templates.TemplateResponse(
             request=request,
@@ -75,10 +97,11 @@ def admin_news_create(
 @router.get("/{news_id}/edit")
 def admin_news_edit(news_id: int, request: Request, service: NewsService = Depends(get_service)):
     item = service.get_news_by_id(news_id)
+    recent_media = media_service.list_recent_files(limit=20)
     return templates.TemplateResponse(
         request=request,
         name="admin/news/_form.html",
-        context={"mode": "edit", "action": f"/admin/news/{item.id}", "item": item},
+        context={"mode": "edit", "action": f"/admin/news/{item.id}", "item": item, "recent_media": recent_media},
     )
 
 
@@ -104,6 +127,7 @@ def admin_news_update(
             "action": f"/admin/news/{news_id}",
             "item": {"id": news_id, "title": title, "slug": slug, "excerpt": excerpt, "content": content, "status": status_value},
             "error": error_message,
+            "recent_media": media_service.list_recent_files(limit=20),
         }
         return templates.TemplateResponse(
             request=request,

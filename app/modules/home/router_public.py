@@ -7,6 +7,8 @@ from app.core.db import get_db
 from app.core.templates import templates
 from app.modules.news.repository import NewsRepository
 from app.modules.news.service import NewsService
+from app.modules.settings.repository import SettingsRepository
+from app.modules.settings.service import SettingsService
 from app.modules.services.repository import ServicesRepository
 from app.modules.services.service import ServicesService
 
@@ -21,22 +23,24 @@ def get_services_service(db: Session = Depends(get_db)) -> ServicesService:
     return ServicesService(ServicesRepository(db))
 
 
+def get_settings_service(db: Session = Depends(get_db)) -> SettingsService:
+    return SettingsService(SettingsRepository(db))
+
+
 @router.get("/")
 def home_landing(
     request: Request,
     news_service: NewsService = Depends(get_news_service),
     services_service: ServicesService = Depends(get_services_service),
+    settings_service: SettingsService = Depends(get_settings_service),
 ):
     news_items, _, _, _ = news_service.list_news(page=1, per_page=3)
     service_items, _, _, _ = services_service.list_services(page=1, per_page=3)
+    site_settings = settings_service.get_site_settings()
     hero = {
-        "eyebrow": "Fast Boiler",
-        "title": "Modern Corporate Landing Template",
-        "description": (
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec feugiat, mauris vitae commodo egestas, "
-            "magna erat hendrerit dui, non blandit arcu velit eu lorem. Proin faucibus nisl a tortor cursus, vitae "
-            "congue purus volutpat."
-        ),
+        "eyebrow": site_settings["site_name"],
+        "title": site_settings["site_name"],
+        "description": site_settings["site_tagline"],
     }
     stats = [
         {"label": "Client Satisfaction", "value": "98%", "description": "Lorem ipsum dolor sit amet, consectetur."},
@@ -70,5 +74,6 @@ def home_landing(
             "testimonials": testimonials,
             "news_items": news_items,
             "service_items": service_items,
+            "site_settings": site_settings,
         },
     )

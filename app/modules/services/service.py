@@ -10,11 +10,27 @@ class ServicesService:
     def __init__(self, repository: ServicesRepository) -> None:
         self.repository = repository
 
-    def list_services(self, *, page: int = 1, per_page: int = 20):
+    def list_services(
+        self,
+        *,
+        page: int = 1,
+        per_page: int = 20,
+        q: str | None = None,
+        status_filter: str | None = None,
+        sort: str = "created_desc",
+    ):
         safe_page = max(1, page)
         safe_per_page = min(max(1, per_page), 100)
         offset = (safe_page - 1) * safe_per_page
-        items, total = self.repository.list_all(offset=offset, limit=safe_per_page)
+        safe_sort = sort if sort in {"created_desc", "created_asc", "name_asc", "name_desc"} else "created_desc"
+        safe_status = status_filter if status_filter in {"draft", "published"} else None
+        items, total = self.repository.list_all(
+            offset=offset,
+            limit=safe_per_page,
+            q=q,
+            status_filter=safe_status,
+            sort=safe_sort,
+        )
         return items, total, safe_page, safe_per_page
 
     def get_service_by_id(self, item_id: int):

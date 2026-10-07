@@ -1,0 +1,20 @@
+{% set stat_title = stat_title | default("Metric") %}
+{% set stat_value = stat_value | default("0") %}
+{% set stat_subtitle = stat_subtitle | default("") %}
+{% set stat_tone = stat_tone | default("default") %}
+{% if stat_tone == "success" %}
+  {% set accent_class = "text-emerald-700" %}
+{% elif stat_tone == "warning" %}
+  {% set accent_class = "text-amber-700" %}
+{% elif stat_tone == "danger" %}
+  {% set accent_class = "text-red-700" %}
+{% else %}
+  {% set accent_class = "text-text" %}
+{% endif %}
+<article class="rounded-lg border border-border bg-page px-4 py-3">
+  <p class="text-xs uppercase tracking-wide text-muted">{{ stat_title }}</p>
+  <p class="mt-1 text-2xl font-semibold {{ accent_class }}">{{ stat_value }}</p>
+  {% if stat_subtitle %}
+    <p class="mt-1 text-xs text-muted">{{ stat_subtitle }}</p>
+  {% endif %}
+</article>

@@ -5,7 +5,7 @@
   {% set page_description = "Pilih fitur yang ingin Anda kelola setelah login." %}
   {% include "components/marketing/_page_header.html" %}
 
-  <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+  <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
     <a href="/admin/news" class="card p-5 hover:border-brand transition">
       <h3 class="text-lg font-semibold">CRUD News</h3>
       <p class="mt-2 text-sm text-muted">Kelola daftar berita, status draft/publish, dan konten detail.</p>
@@ -21,6 +21,18 @@
     <a href="/admin/canvas" class="card p-5 hover:border-brand transition">
       <h3 class="text-lg font-semibold">Canvas</h3>
       <p class="mt-2 text-sm text-muted">Ruang kerja canvas untuk fitur visual/editor berikutnya.</p>
+    </a>
+    <a href="/admin/pages" class="card p-5 hover:border-brand transition">
+      <h3 class="text-lg font-semibold">CRUD Pages</h3>
+      <p class="mt-2 text-sm text-muted">Kelola halaman statis seperti profil, kebijakan, dan informasi umum.</p>
+    </a>
+    <a href="/admin/settings" class="card p-5 hover:border-brand transition">
+      <h3 class="text-lg font-semibold">Site Settings</h3>
+      <p class="mt-2 text-sm text-muted">Atur nama situs, tagline, dan email kontak utama dari satu tempat.</p>
+    </a>
+    <a href="/admin/logger" class="card p-5 hover:border-brand transition">
+      <h3 class="text-lg font-semibold">Logger Table</h3>
+      <p class="mt-2 text-sm text-muted">Pantau log request aplikasi dan bersihkan log per item, terpilih, atau per halaman.</p>
     </a>
   </div>
 

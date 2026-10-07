@@ -18,12 +18,14 @@ media_service = MediaService()
 
 @router.get("")
 def media_index(request: Request):
+    recent_media = media_service.list_recent_files(limit=20)
     return templates.TemplateResponse(
         request=request,
         name="admin/media/index.html",
         context={
             "success_name": request.query_params.get("uploaded"),
             "error": None,
+            "recent_media": recent_media,
         },
     )
 
@@ -33,14 +35,14 @@ async def media_upload(request: Request, file: UploadFile = File(...)):
     try:
         result = await media_service.upload_file(file)
     except HTTPException as exc:
+        recent_media = media_service.list_recent_files(limit=20)
         return templates.TemplateResponse(
             request=request,
             name="admin/media/index.html",
-            context={"success_name": None, "error": str(exc.detail)},
+            context={"success_name": None, "error": str(exc.detail), "recent_media": recent_media},
             status_code=exc.status_code,
         )
     return RedirectResponse(
         url=f"/admin/media?uploaded={result.original_name}",
         status_code=status.HTTP_303_SEE_OTHER,
     )
-

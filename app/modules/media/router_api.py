@@ -3,7 +3,7 @@ from __future__ import annotations
 from datetime import datetime, timezone
 from uuid import uuid4
 
-from fastapi import APIRouter, Depends, File, Request, UploadFile
+from fastapi import APIRouter, Depends, File, Query, Request, UploadFile
 
 from app.modules.auth.dependencies import require_permission
 from app.modules.news.schemas import ApiMeta, ApiResponse
@@ -36,5 +36,19 @@ async def upload_media(
         success=True,
         message="File uploaded successfully.",
         data=result.model_dump(),
+        meta=_meta(request),
+    )
+
+
+@router.get("/list", response_model=ApiResponse)
+def list_media(
+    request: Request,
+    limit: int = Query(default=20, ge=1, le=100),
+):
+    items = media_service.list_recent_files(limit=limit)
+    return ApiResponse(
+        success=True,
+        message="Media list fetched.",
+        data=[item.model_dump() for item in items],
         meta=_meta(request),
     )

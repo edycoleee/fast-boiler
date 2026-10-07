@@ -1,0 +1,27 @@
+{% set field_id = field_id | default("field-input") %}
+{% set field_name = field_name | default(field_id) %}
+{% set field_label = field_label | default("Field label") %}
+{% set field_type = field_type | default("text") %}
+{% set field_value = field_value | default("") %}
+{% set field_placeholder = field_placeholder | default("") %}
+{% set field_required = field_required | default(false) %}
+{% set field_help = field_help | default("") %}
+{% set field_error = field_error | default("") %}
+{% set field_input_class = field_input_class | default("input-base") %}
+<div>
+  <label class="mb-1 block text-sm font-medium" for="{{ field_id }}">{{ field_label }}</label>
+  <input
+    id="{{ field_id }}"
+    name="{{ field_name }}"
+    type="{{ field_type }}"
+    value="{{ field_value }}"
+    placeholder="{{ field_placeholder }}"
+    class="{{ field_input_class }}{{ ' border-red-300 focus:border-red-500 focus:ring-red-200' if field_error else '' }}"
+    {% if field_required %}required{% endif %}
+  />
+  {% if field_error %}
+    <p class="mt-1 text-xs text-red-600">{{ field_error }}</p>
+  {% elif field_help %}
+    <p class="mt-1 text-xs text-muted">{{ field_help }}</p>
+  {% endif %}
+</div>

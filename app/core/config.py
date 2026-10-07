@@ -31,6 +31,7 @@ def _env_int(name: str, default: int) -> int:
 class Settings:
     app_name: str = os.getenv("APP_NAME", "Fast Boiler")
     app_env: str = os.getenv("APP_ENV", "development")
+    log_level: str = os.getenv("LOG_LEVEL", "INFO")
     secret_key: str = os.getenv("SECRET_KEY", "change-me")
     db_url: str = os.getenv("DB_URL", "sqlite:///data/app.db")
     theme_color_page: str = os.getenv("THEME_COLOR_PAGE", "248 250 252")

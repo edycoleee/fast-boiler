@@ -7,7 +7,7 @@ from fastapi import HTTPException, UploadFile, status
 
 from app.core.config import settings
 from app.modules.media.repository import MediaRepository
-from app.modules.media.schemas import MediaUploadResult
+from app.modules.media.schemas import MediaItemOut, MediaUploadResult
 
 
 class MediaService:
@@ -66,3 +66,5 @@ class MediaService:
             path=stored_path,
         )
 
+    def list_recent_files(self, *, limit: int = 20) -> list[MediaItemOut]:
+        return self.repository.list_recent(limit=limit)

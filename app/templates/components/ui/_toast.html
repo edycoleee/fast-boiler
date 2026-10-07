@@ -1,0 +1,21 @@
+{% set toast_tone = toast_tone | default("info") %}
+{% set toast_title = toast_title | default("Notification") %}
+{% set toast_message = toast_message | default("Action completed.") %}
+{% if toast_tone == "success" %}
+  {% set toast_class = "border-emerald-300 bg-emerald-50 text-emerald-800" %}
+{% elif toast_tone == "warning" %}
+  {% set toast_class = "border-amber-300 bg-amber-50 text-amber-800" %}
+{% elif toast_tone == "danger" %}
+  {% set toast_class = "border-red-300 bg-red-50 text-red-800" %}
+{% else %}
+  {% set toast_class = "border-blue-300 bg-blue-50 text-blue-800" %}
+{% endif %}
+<article class="w-full max-w-sm rounded-lg border px-3 py-2 shadow-soft {{ toast_class }}" role="status" aria-live="polite">
+  <div class="flex items-start justify-between gap-3">
+    <div>
+      <p class="text-sm font-semibold">{{ toast_title }}</p>
+      <p class="mt-1 text-xs">{{ toast_message }}</p>
+    </div>
+    <button type="button" class="btn-outline !px-2 !py-1 text-xs" data-dismiss-toast>Close</button>
+  </div>
+</article>

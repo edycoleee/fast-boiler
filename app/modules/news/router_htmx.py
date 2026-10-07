@@ -25,13 +25,30 @@ def news_table_partial(
     request: Request,
     page: int = Query(default=1, ge=1),
     per_page: int = Query(default=10, ge=1, le=100),
+    q: str = Query(default=""),
+    status_filter: str = Query(default="", alias="status_filter"),
+    sort: str = Query(default="created_desc"),
     service: NewsService = Depends(get_service),
 ):
-    items, total, page, per_page = service.list_news(page=page, per_page=per_page)
+    items, total, page, per_page = service.list_news(
+        page=page,
+        per_page=per_page,
+        q=q,
+        status_filter=status_filter or None,
+        sort=sort,
+    )
     return templates.TemplateResponse(
         request=request,
         name="admin/news/_table.html",
-        context={"items": items, "total": total, "page": page, "per_page": per_page},
+        context={
+            "items": items,
+            "total": total,
+            "page": page,
+            "per_page": per_page,
+            "q": q,
+            "status_filter": status_filter,
+            "sort": sort,
+        },
     )
 
 
@@ -62,9 +79,12 @@ def news_filters_partial(
     request: Request,
     page: int = Query(default=1, ge=1),
     per_page: int = Query(default=10, ge=1, le=100),
+    q: str = Query(default=""),
+    status_filter: str = Query(default="", alias="status_filter"),
+    sort: str = Query(default="created_desc"),
 ):
     return templates.TemplateResponse(
         request=request,
         name="admin/news/_filters.html",
-        context={"page": page, "per_page": per_page},
+        context={"page": page, "per_page": per_page, "q": q, "status_filter": status_filter, "sort": sort},
     )

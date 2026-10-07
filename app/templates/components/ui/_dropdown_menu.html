@@ -1,0 +1,11 @@
+{% set dropdown_id = dropdown_id | default("dropdown-menu") %}
+{% set dropdown_label = dropdown_label | default("Actions") %}
+{% set dropdown_items = dropdown_items | default([]) %}
+<details id="{{ dropdown_id }}" class="dropdown-menu relative inline-block">
+  <summary class="btn-outline cursor-pointer list-none">{{ dropdown_label }}</summary>
+  <div class="absolute right-0 z-20 mt-2 min-w-44 rounded-lg border border-border bg-surface p-1 shadow-soft">
+    {% for item in dropdown_items %}
+      <a href="{{ item.href }}" class="block rounded-md px-3 py-2 text-sm hover:bg-page">{{ item.label }}</a>
+    {% endfor %}
+  </div>
+</details>

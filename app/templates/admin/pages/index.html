@@ -1,0 +1,124 @@
+{% extends "layouts/admin.html" %}
+{% block title %}Manage Pages{% endblock %}
+{% block content %}
+  {% set page_eyebrow = "Content Management" %}
+  {% set page_title = "Manage Pages" %}
+  {% set page_description = "Kelola halaman statis profesional untuk company profile, kebijakan, dan informasi umum." %}
+  {% include "components/marketing/_page_header.html" %}
+
+  {% if result == "created" %}
+    <div class="mb-4 rounded-lg border border-emerald-300 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">Page berhasil dibuat.</div>
+  {% elif result == "updated" %}
+    <div class="mb-4 rounded-lg border border-emerald-300 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">Page berhasil diperbarui.</div>
+  {% elif result == "deleted" %}
+    <div class="mb-4 rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-800">Page berhasil dihapus.</div>
+  {% endif %}
+
+  <section class="card p-5">
+    <div class="mb-4 flex flex-wrap items-center justify-between gap-3 border-b border-border pb-4">
+      <div>
+        <p class="text-sm font-medium text-text">Pages workspace</p>
+        <p class="text-xs text-muted">Simpan konten halaman statis dengan status draft/published dan slug URL yang rapi.</p>
+      </div>
+      <a href="/admin/pages/new" class="btn-primary">+ Create Page</a>
+    </div>
+
+    <form class="mb-4 flex flex-wrap items-end gap-3 rounded-lg border border-border bg-page px-3 py-3" method="get" action="/admin/pages">
+      <div class="min-w-56 flex-1">
+        <label class="mb-1 block text-xs font-medium uppercase tracking-wide text-muted" for="q">Search</label>
+        <input id="q" name="q" value="{{ q if q else '' }}" class="input-base" placeholder="Title, slug, summary..." />
+      </div>
+      <div>
+        <label class="mb-1 block text-xs font-medium uppercase tracking-wide text-muted" for="status_filter">Status</label>
+        <select id="status_filter" name="status_filter" class="input-base min-w-32">
+          <option value="" {% if not status_filter %}selected{% endif %}>All</option>
+          <option value="draft" {% if status_filter == "draft" %}selected{% endif %}>Draft</option>
+          <option value="published" {% if status_filter == "published" %}selected{% endif %}>Published</option>
+        </select>
+      </div>
+      <div>
+        <label class="mb-1 block text-xs font-medium uppercase tracking-wide text-muted" for="sort">Sort</label>
+        <select id="sort" name="sort" class="input-base min-w-44">
+          <option value="created_desc" {% if (sort or "created_desc") == "created_desc" %}selected{% endif %}>Newest</option>
+          <option value="created_asc" {% if sort == "created_asc" %}selected{% endif %}>Oldest</option>
+          <option value="title_asc" {% if sort == "title_asc" %}selected{% endif %}>Title A-Z</option>
+          <option value="title_desc" {% if sort == "title_desc" %}selected{% endif %}>Title Z-A</option>
+        </select>
+      </div>
+      <div>
+        <label class="mb-1 block text-xs font-medium uppercase tracking-wide text-muted" for="per_page">Rows per page</label>
+        <select id="per_page" name="per_page" class="input-base min-w-28">
+          <option value="10" {% if (per_page or 10) == 10 %}selected{% endif %}>10</option>
+          <option value="20" {% if (per_page or 10) == 20 %}selected{% endif %}>20</option>
+          <option value="50" {% if (per_page or 10) == 50 %}selected{% endif %}>50</option>
+        </select>
+      </div>
+      <div>
+        <label class="mb-1 block text-xs font-medium uppercase tracking-wide text-muted" for="page">Page</label>
+        <input id="page" name="page" type="number" min="1" value="{{ page if page else 1 }}" class="input-base w-24" />
+      </div>
+      <button type="submit" class="btn-outline">Apply</button>
+      <a href="/admin/pages" class="btn-outline">Reset</a>
+    </form>
+
+    {% if items %}
+      <div class="overflow-x-auto rounded-lg border border-border">
+        <table class="min-w-full divide-y divide-border text-sm">
+          <thead class="bg-page">
+            <tr>
+              <th class="px-4 py-3 text-left font-semibold text-muted">Title</th>
+              <th class="px-4 py-3 text-left font-semibold text-muted">Slug</th>
+              <th class="px-4 py-3 text-left font-semibold text-muted">Status</th>
+              <th class="px-4 py-3 text-right font-semibold text-muted">Action</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-border bg-surface">
+            {% for item in items %}
+              <tr>
+                <td class="px-4 py-3">{{ item.title }}</td>
+                <td class="px-4 py-3 font-mono text-xs">{{ item.slug }}</td>
+                <td class="px-4 py-3">
+                  <span class="rounded-full px-2 py-1 text-xs {{ 'bg-emerald-100 text-emerald-700' if item.status == 'published' else 'bg-amber-100 text-amber-700' }}">
+                    {{ item.status }}
+                  </span>
+                </td>
+                <td class="px-4 py-3">
+                  <div class="flex justify-end gap-2">
+                    <a href="/pages/{{ item.slug }}" class="btn-outline">View</a>
+                    <a href="/admin/pages/{{ item.id }}/edit" class="btn-outline">Edit</a>
+                    <form action="/admin/pages/{{ item.id }}/delete" method="post" onsubmit="return confirm('Hapus page ini?');">
+                      <button type="submit" class="btn-danger">Delete</button>
+                    </form>
+                  </div>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      {% set empty_title = "No pages found." %}
+      {% set empty_description = "Belum ada page. Mulai dari tombol Create Page." %}
+      {% include "components/ui/_empty_state.html" %}
+    {% endif %}
+
+    {% set total_pages = ((total + per_page - 1) // per_page) if per_page > 0 else 1 %}
+    {% set query_tail = '&q=' ~ (q|default('', true)|urlencode) ~ '&status_filter=' ~ (status_filter|default('', true)|urlencode) ~ '&sort=' ~ (sort|default('created_desc', true)|urlencode) %}
+    <div class="mt-3 flex flex-wrap items-center justify-between gap-2 text-xs text-muted">
+      <p>Total items: <span class="font-semibold text-text">{{ total }}</span></p>
+      <div class="flex items-center gap-2">
+        {% if page > 1 %}
+          <a href="/admin/pages?page={{ page - 1 }}&per_page={{ per_page }}{{ query_tail }}" class="btn-outline">Prev</a>
+        {% else %}
+          <span class="btn-outline pointer-events-none opacity-50">Prev</span>
+        {% endif %}
+        <p>Page <span class="font-semibold text-text">{{ page }}</span> / <span class="font-semibold text-text">{{ total_pages }}</span></p>
+        {% if page < total_pages %}
+          <a href="/admin/pages?page={{ page + 1 }}&per_page={{ per_page }}{{ query_tail }}" class="btn-outline">Next</a>
+        {% else %}
+          <span class="btn-outline pointer-events-none opacity-50">Next</span>
+        {% endif %}
+      </div>
+    </div>
+  </section>
+{% endblock %}

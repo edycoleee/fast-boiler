@@ -1,0 +1,14 @@
+{% set sortable_label = sortable_label | default("Column") %}
+{% set sortable_href = sortable_href | default("#") %}
+{% set sortable_active = sortable_active | default(false) %}
+{% set sortable_direction = sortable_direction | default("none") %}
+<a href="{{ sortable_href }}" class="inline-flex items-center gap-1 hover:text-text {{ 'text-text' if sortable_active else 'text-muted' }}">
+  <span>{{ sortable_label }}</span>
+  {% if sortable_direction == "asc" %}
+    <span aria-hidden="true">↑</span>
+  {% elif sortable_direction == "desc" %}
+    <span aria-hidden="true">↓</span>
+  {% else %}
+    <span aria-hidden="true">↕</span>
+  {% endif %}
+</a>

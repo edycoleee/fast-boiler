@@ -70,6 +70,15 @@ def test_login_and_access_admin_pages():
         canvas_response = client.get("/admin/canvas")
         assert canvas_response.status_code == 200
 
+        logger_response = client.get("/admin/logger")
+        assert logger_response.status_code == 200
+
+        pages_response = client.get("/admin/pages")
+        assert pages_response.status_code == 200
+
+        settings_response = client.get("/admin/settings")
+        assert settings_response.status_code == 200
+
 
 def test_news_admin_prg_create_redirect():
     with TestClient(app) as client:
@@ -210,6 +219,49 @@ def test_news_htmx_table_partial_response():
         assert "<table" in response.text or "No news found." in response.text
 
 
+def test_news_admin_filter_sort_search():
+    with TestClient(app) as client:
+        login_as_admin(client)
+        unique_suffix = uuid4().hex[:6]
+        draft_slug = f"news-filter-draft-{unique_suffix}"
+        published_slug = f"news-filter-pub-{unique_suffix}"
+
+        create_draft = client.post(
+            "/admin/news",
+            data={
+                "title": f"Alpha Draft {unique_suffix}",
+                "slug": draft_slug,
+                "excerpt": "draft excerpt",
+                "content": "Konten draft untuk validasi filter status news.",
+                "status": "draft",
+            },
+            follow_redirects=False,
+        )
+        assert create_draft.status_code == 303
+
+        create_published = client.post(
+            "/admin/news",
+            data={
+                "title": f"Zulu Published {unique_suffix}",
+                "slug": published_slug,
+                "excerpt": "published excerpt",
+                "content": "Konten published untuk validasi search dan sort news.",
+                "status": "published",
+            },
+            follow_redirects=False,
+        )
+        assert create_published.status_code == 303
+
+        filtered = client.get(
+            "/admin/news/partials/table",
+            params={"q": unique_suffix, "status_filter": "published", "sort": "title_desc", "per_page": 20},
+            headers={"HX-Request": "true"},
+        )
+        assert filtered.status_code == 200
+        assert published_slug in filtered.text
+        assert draft_slug not in filtered.text
+
+
 def test_news_htmx_form_inline_validation_error():
     with TestClient(app) as client:
         login_as_admin(client)
@@ -307,6 +359,49 @@ def test_services_admin_audit_fields_present():
         assert created["updated_by"] is not None
 
 
+def test_services_admin_filter_sort_search():
+    with TestClient(app) as client:
+        login_as_admin(client)
+        unique_suffix = uuid4().hex[:6]
+        draft_slug = f"service-filter-draft-{unique_suffix}"
+        published_slug = f"service-filter-pub-{unique_suffix}"
+
+        create_draft = client.post(
+            "/admin/services",
+            data={
+                "name": f"Alpha Service {unique_suffix}",
+                "slug": draft_slug,
+                "summary": "summary draft",
+                "description": "Deskripsi draft untuk validasi filter status service.",
+                "status": "draft",
+            },
+            follow_redirects=False,
+        )
+        assert create_draft.status_code == 303
+
+        create_published = client.post(
+            "/admin/services",
+            data={
+                "name": f"Zulu Service {unique_suffix}",
+                "slug": published_slug,
+                "summary": "summary published",
+                "description": "Deskripsi published untuk validasi search dan sort service.",
+                "status": "published",
+            },
+            follow_redirects=False,
+        )
+        assert create_published.status_code == 303
+
+        filtered = client.get(
+            "/admin/services/partials/table",
+            params={"q": unique_suffix, "status_filter": "published", "sort": "name_desc", "per_page": 20},
+            headers={"HX-Request": "true"},
+        )
+        assert filtered.status_code == 200
+        assert published_slug in filtered.text
+        assert draft_slug not in filtered.text
+
+
 def test_services_admin_duplicate_redirect():
     with TestClient(app) as client:
         login_as_admin(client)
@@ -384,6 +479,22 @@ def test_media_upload_success():
         assert payload["success"] is True
         assert payload["data"]["original_name"] == "ok.txt"
         assert payload["data"]["size"] == len(b"tiny-content")
+
+
+def test_media_list_after_upload():
+    with TestClient(app) as client:
+        login_as_admin(client)
+        upload_response = client.post(
+            "/api/v1/media/upload",
+            files={"file": ("picker.txt", b"picker-content", "text/plain")},
+        )
+        assert upload_response.status_code == 200
+
+        list_response = client.get("/api/v1/media/list", params={"limit": 20})
+        assert list_response.status_code == 200
+        payload = list_response.json()
+        assert payload["success"] is True
+        assert any(item["name"].endswith("picker.txt") for item in payload["data"])
 
 
 def test_server_draft_autosave_lifecycle():

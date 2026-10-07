@@ -49,8 +49,32 @@
     @apply btn border border-border bg-white text-text hover:bg-slate-50;
   }
 
+  .btn-danger {
+    @apply btn border border-red-300 bg-red-50 text-red-700 hover:bg-red-100;
+  }
+
+  .btn[disabled] {
+    @apply cursor-not-allowed opacity-50;
+  }
+
+  .btn.is-loading {
+    @apply relative text-transparent;
+  }
+
+  .btn.is-loading::after {
+    content: "";
+    @apply absolute h-4 w-4 animate-spin rounded-full border-2 border-current border-r-transparent;
+  }
+
   .input-base {
     @apply w-full rounded-lg border border-border px-3 py-2 text-sm outline-none focus:border-brand focus:ring-2 focus:ring-brand/20;
   }
-}
 
+  .skeleton {
+    @apply animate-pulse bg-slate-200;
+  }
+
+  .dropdown-menu > summary::-webkit-details-marker {
+    display: none;
+  }
+}

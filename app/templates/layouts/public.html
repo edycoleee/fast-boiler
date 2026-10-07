@@ -28,20 +28,21 @@
         <div class="flex items-center gap-4 text-sm">
           <a class="hover:text-brand" href="/news">News</a>
           <a class="hover:text-brand" href="/services">Services</a>
+          <a class="hover:text-brand" href="/pages">Pages</a>
           <a class="hover:text-brand" href="/design-system">Design System</a>
           {% if request.session.get("user_id") %}
             <a class="btn-outline" href="/admin">Dashboard</a>
           {% else %}
             <a class="btn-primary" href="/auth/login">Login</a>
           {% endif %}
-          <button type="button" class="btn-outline" onclick="window.setTheme('default')">Default</button>
-          <button type="button" class="btn-outline" onclick="window.setTheme('emerald')">Emerald</button>
-          <button type="button" class="btn-outline" onclick="window.setTheme('violet')">Violet</button>
+          {% set show_design_system_link = false %}
+          {% include "components/ui/_theme_switcher.html" %}
         </div>
       </nav>
     </header>
     <main class="container-app py-8">
       {% block content %}{% endblock %}
     </main>
+    {% include "components/ui/_site_footer.html" %}
   </body>
 </html>

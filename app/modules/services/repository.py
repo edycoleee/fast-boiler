@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from sqlalchemy import func, select
+from sqlalchemy import func, or_, select
 from sqlalchemy.orm import Session
 
 from app.modules.services.models import ServiceItem
@@ -11,9 +11,39 @@ class ServicesRepository:
     def __init__(self, db: Session) -> None:
         self.db = db
 
-    def list_all(self, *, offset: int = 0, limit: int = 20) -> tuple[list[ServiceItem], int]:
-        items = self.db.scalars(select(ServiceItem).order_by(ServiceItem.created_at.desc()).offset(offset).limit(limit)).all()
-        total = self.db.scalar(select(func.count()).select_from(ServiceItem)) or 0
+    def list_all(
+        self,
+        *,
+        offset: int = 0,
+        limit: int = 20,
+        q: str | None = None,
+        status_filter: str | None = None,
+        sort: str = "created_desc",
+    ) -> tuple[list[ServiceItem], int]:
+        query = select(ServiceItem)
+        count_query = select(func.count()).select_from(ServiceItem)
+
+        keyword = (q or "").strip()
+        if keyword:
+            like_pattern = f"%{keyword}%"
+            predicate = or_(ServiceItem.name.ilike(like_pattern), ServiceItem.slug.ilike(like_pattern), ServiceItem.summary.ilike(like_pattern))
+            query = query.where(predicate)
+            count_query = count_query.where(predicate)
+
+        if status_filter in {"draft", "published"}:
+            status_predicate = ServiceItem.status == status_filter
+            query = query.where(status_predicate)
+            count_query = count_query.where(status_predicate)
+
+        order_map = {
+            "created_desc": ServiceItem.created_at.desc(),
+            "created_asc": ServiceItem.created_at.asc(),
+            "name_asc": ServiceItem.name.asc(),
+            "name_desc": ServiceItem.name.desc(),
+        }
+        order_by = order_map.get(sort, ServiceItem.created_at.desc())
+        items = self.db.scalars(query.order_by(order_by).offset(offset).limit(limit)).all()
+        total = self.db.scalar(count_query) or 0
         return items, int(total)
 
     def get_by_id(self, item_id: int) -> ServiceItem | None:

@@ -4,6 +4,27 @@
   hx-target="#services-table-container"
   hx-swap="innerHTML"
 >
+  <div class="min-w-56 flex-1">
+    <label class="mb-1 block text-xs font-medium uppercase tracking-wide text-muted" for="q">Search</label>
+    <input id="q" name="q" value="{{ q if q else '' }}" class="input-base" placeholder="Name, slug, summary..." />
+  </div>
+  <div>
+    <label class="mb-1 block text-xs font-medium uppercase tracking-wide text-muted" for="status_filter">Status</label>
+    <select id="status_filter" name="status_filter" class="input-base min-w-32">
+      <option value="" {% if not status_filter %}selected{% endif %}>All</option>
+      <option value="draft" {% if status_filter == "draft" %}selected{% endif %}>Draft</option>
+      <option value="published" {% if status_filter == "published" %}selected{% endif %}>Published</option>
+    </select>
+  </div>
+  <div>
+    <label class="mb-1 block text-xs font-medium uppercase tracking-wide text-muted" for="sort">Sort</label>
+    <select id="sort" name="sort" class="input-base min-w-44">
+      <option value="created_desc" {% if (sort or "created_desc") == "created_desc" %}selected{% endif %}>Newest</option>
+      <option value="created_asc" {% if sort == "created_asc" %}selected{% endif %}>Oldest</option>
+      <option value="name_asc" {% if sort == "name_asc" %}selected{% endif %}>Name A-Z</option>
+      <option value="name_desc" {% if sort == "name_desc" %}selected{% endif %}>Name Z-A</option>
+    </select>
+  </div>
   <div>
     <label class="mb-1 block text-xs font-medium uppercase tracking-wide text-muted" for="per_page">Rows per page</label>
     <select id="per_page" name="per_page" class="input-base min-w-28">
@@ -17,6 +38,7 @@
     <input id="page" name="page" type="number" min="1" value="{{ page if page else 1 }}" class="input-base w-24" />
   </div>
   <button type="submit" class="btn-outline">Apply</button>
+  <a href="/admin/services" class="btn-outline">Reset</a>
 </form>
 
 <div id="services-table-container">

@@ -1,0 +1,18 @@
+{% set file_id = file_id | default("file-1") %}
+{% set file_name = file_name | default(file_id) %}
+{% set file_label = file_label | default("Upload file") %}
+{% set file_help = file_help | default("") %}
+{% set file_accept = file_accept | default("") %}
+<div>
+  <label class="mb-1 block text-sm font-medium" for="{{ file_id }}">{{ file_label }}</label>
+  <input
+    id="{{ file_id }}"
+    name="{{ file_name }}"
+    type="file"
+    class="input-base file:mr-3 file:rounded-md file:border-0 file:bg-brand file:px-3 file:py-2 file:text-sm file:font-medium file:text-brand-foreground hover:file:opacity-90"
+    {% if file_accept %}accept="{{ file_accept }}"{% endif %}
+  />
+  {% if file_help %}
+    <p class="mt-1 text-xs text-muted">{{ file_help }}</p>
+  {% endif %}
+</div>

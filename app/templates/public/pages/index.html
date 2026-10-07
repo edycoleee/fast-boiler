@@ -1,0 +1,24 @@
+{% extends "layouts/public.html" %}
+{% block title %}Pages - Fast Boiler{% endblock %}
+{% block content %}
+  {% set page_title = "Pages" %}
+  {% set page_description = "Kumpulan halaman informasi publik yang dikelola dari admin panel." %}
+  {% include "components/marketing/_page_header.html" %}
+
+  <section class="mb-8 space-y-3">
+    {% if items %}
+      {% for item in items %}
+        <article class="card">
+          <h2 class="text-lg font-semibold">
+            <a class="hover:text-brand" href="/pages/{{ item.slug }}">{{ item.title }}</a>
+          </h2>
+          {% if item.summary %}
+            <p class="mt-2 text-sm text-muted">{{ item.summary }}</p>
+          {% endif %}
+        </article>
+      {% endfor %}
+    {% else %}
+      <p class="text-sm text-muted">No pages yet.</p>
+    {% endif %}
+  </section>
+{% endblock %}

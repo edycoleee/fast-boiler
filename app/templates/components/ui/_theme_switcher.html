@@ -1,0 +1,8 @@
+<div class="flex items-center gap-2">
+  <button type="button" class="btn-outline" onclick="window.setTheme('default')">Default</button>
+  <button type="button" class="btn-outline" onclick="window.setTheme('emerald')">Emerald</button>
+  <button type="button" class="btn-outline" onclick="window.setTheme('violet')">Violet</button>
+  {% if show_design_system_link %}
+    <a href="/design-system" class="btn-outline">Design System</a>
+  {% endif %}
+</div>

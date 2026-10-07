@@ -41,6 +41,9 @@
       <div class="flex flex-wrap gap-3">
         <button class="btn-primary" type="button">Primary</button>
         <button class="btn-outline" type="button">Outline</button>
+        <button class="btn-danger" type="button">Danger</button>
+        <button class="btn-primary" type="button" disabled>Disabled</button>
+        <button class="btn-primary is-loading" type="button" aria-busy="true">Loading</button>
       </div>
     </article>
     <article class="card">
@@ -54,19 +57,189 @@
   </section>
 
   <section class="mb-8 card">
-    <h2 class="mb-3 text-xl font-semibold">Form Controls</h2>
-    <div class="grid gap-3 md:grid-cols-2">
-      <div>
-        <label class="mb-1 block text-sm font-medium" for="sample-input">Input</label>
-        <input id="sample-input" class="input-base" placeholder="Lorem ipsum" />
-      </div>
+    <h2 class="mb-3 text-xl font-semibold">Form Essentials (Reusable)</h2>
+    <div class="grid gap-4 md:grid-cols-2">
+      {% set field_id = "ds-name" %}
+      {% set field_name = "name" %}
+      {% set field_label = "Name" %}
+      {% set field_placeholder = "John Doe" %}
+      {% set field_help = "Nama lengkap untuk kebutuhan profil." %}
+      {% include "components/forms/_input_group.html" %}
+
+      {% set field_id = "ds-email" %}
+      {% set field_name = "email" %}
+      {% set field_label = "Email" %}
+      {% set field_type = "email" %}
+      {% set field_value = "invalid-email-format" %}
+      {% set field_help = "" %}
+      {% set field_error = "Format email tidak valid." %}
+      {% include "components/forms/_input_group.html" %}
+    </div>
+
+    <div class="mt-4 grid gap-4 md:grid-cols-2">
       <div>
         <label class="mb-1 block text-sm font-medium" for="sample-select">Select</label>
         <select id="sample-select" class="input-base">
           <option>Option A</option>
           <option>Option B</option>
         </select>
+        <p class="mt-1 text-xs text-muted">Reusable melalui class input-base.</p>
       </div>
+      <div>
+        <label class="mb-1 block text-sm font-medium" for="sample-textarea">Textarea</label>
+        <textarea id="sample-textarea" class="input-base min-h-24">Sample textarea value</textarea>
+      </div>
+    </div>
+
+    <div class="mt-4 grid gap-4 md:grid-cols-2">
+      {% set checkbox_id = "ds-checkbox-1" %}
+      {% set checkbox_name = "newsletter" %}
+      {% set checkbox_label = "Subscribe newsletter updates" %}
+      {% set checkbox_checked = true %}
+      {% set checkbox_help = "Contoh checkbox dengan helper text." %}
+      {% include "components/forms/_checkbox.html" %}
+
+      {% set switch_id = "ds-switch-1" %}
+      {% set switch_name = "notifications" %}
+      {% set switch_label = "Enable push notification" %}
+      {% set switch_checked = true %}
+      {% set switch_help = "Switch untuk pengaturan boolean di form admin." %}
+      {% include "components/forms/_switch.html" %}
+    </div>
+
+    <div class="mt-4">
+      {% set radio_name = "publish-mode" %}
+      {% set radio_label = "Publishing mode" %}
+      {% set radio_options = [{"value": "draft", "label": "Draft"}, {"value": "review", "label": "Review"}, {"value": "published", "label": "Published"}] %}
+      {% set radio_selected = "review" %}
+      {% set radio_help = "Radio group untuk memilih status tunggal." %}
+      {% include "components/forms/_radio_group.html" %}
+    </div>
+
+    <div class="mt-4">
+      {% set file_id = "ds-file-1" %}
+      {% set file_name = "attachment" %}
+      {% set file_label = "Upload attachment" %}
+      {% set file_help = "Accepted: PNG, JPG, PDF." %}
+      {% set file_accept = ".png,.jpg,.jpeg,.pdf" %}
+      {% include "components/forms/_file_input.html" %}
+    </div>
+  </section>
+
+  <section class="mb-8 grid gap-4 md:grid-cols-2">
+    <article class="card">
+      <h2 class="mb-3 text-xl font-semibold">Alert & Empty State</h2>
+      {% set alert_tone = "success" %}
+      {% set alert_message = "Reusable success alert component." %}
+      {% include "components/ui/_alert.html" %}
+      {% set empty_title = "No records in this section." %}
+      {% set empty_description = "Use the create button to add your first record." %}
+      {% include "components/ui/_empty_state.html" %}
+    </article>
+    <article class="card">
+      <h2 class="mb-3 text-xl font-semibold">Modal Component</h2>
+      {% set modal_title = "Reusable Modal" %}
+      {% set modal_content = "Gunakan pola dialog ini untuk confirm action atau form singkat." %}
+      {% include "components/ui/_modal.html" %}
+    </article>
+  </section>
+
+  <section class="mb-8 grid gap-4 md:grid-cols-2">
+    <article class="card">
+      <h2 class="mb-3 text-xl font-semibold">Feedback Components</h2>
+      <div class="space-y-3">
+        {% set toast_tone = "success" %}
+        {% set toast_title = "Saved" %}
+        {% set toast_message = "Data berhasil disimpan ke server." %}
+        {% include "components/ui/_toast.html" %}
+
+        {% set toast_tone = "warning" %}
+        {% set toast_title = "Validation needed" %}
+        {% set toast_message = "Periksa kembali field yang wajib diisi." %}
+        {% include "components/ui/_toast.html" %}
+      </div>
+    </article>
+    <article class="card">
+      <h2 class="mb-3 text-xl font-semibold">Skeleton Loader</h2>
+      <div class="space-y-3">
+        {% set skeleton_title = true %}
+        {% set skeleton_lines = 4 %}
+        {% include "components/ui/_skeleton.html" %}
+      </div>
+    </article>
+  </section>
+
+  <section class="mb-8 grid gap-4 md:grid-cols-2">
+    <article class="card">
+      <h2 class="mb-3 text-xl font-semibold">Dropdown Action Menu</h2>
+      {% set dropdown_id = "ds-actions-dropdown" %}
+      {% set dropdown_label = "Open Actions" %}
+      {% set dropdown_items = [{"label": "Edit item", "href": "#edit"}, {"label": "Duplicate item", "href": "#duplicate"}, {"label": "View detail", "href": "#detail"}] %}
+      {% include "components/ui/_dropdown_menu.html" %}
+    </article>
+    <article class="card">
+      <h2 class="mb-3 text-xl font-semibold">Confirmation Modal Pattern</h2>
+      <p class="mb-3 text-sm text-muted">Gunakan pola ini sebelum aksi destructive agar UX konsisten.</p>
+      <form id="ds-confirm-form" action="/design-system" method="get"></form>
+      <button type="button" class="btn-danger" data-dialog-open="ds-confirm-dialog">Open Confirm Modal</button>
+      {% set confirm_id = "ds-confirm-dialog" %}
+      {% set confirm_title = "Delete record?" %}
+      {% set confirm_message = "Data yang dihapus tidak dapat dikembalikan. Lanjutkan?" %}
+      {% set confirm_button_label = "Yes, delete" %}
+      {% set confirm_button_class = "btn-danger" %}
+      {% set confirm_form_id = "ds-confirm-form" %}
+      {% include "components/ui/_confirm_action.html" %}
+    </article>
+  </section>
+
+  <section class="mb-8 card">
+    <h2 class="mb-3 text-xl font-semibold">Data Display Components</h2>
+    <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      {% set stat_title = "Total Requests" %}{% set stat_value = "1,248" %}{% set stat_subtitle = "30 hari terakhir" %}{% set stat_tone = "default" %}{% include "components/data/_stats_card.html" %}
+      {% set stat_title = "Success 2xx" %}{% set stat_value = "1,120" %}{% set stat_subtitle = "Stabil" %}{% set stat_tone = "success" %}{% include "components/data/_stats_card.html" %}
+      {% set stat_title = "Client 4xx" %}{% set stat_value = "103" %}{% set stat_subtitle = "Cek validasi input" %}{% set stat_tone = "warning" %}{% include "components/data/_stats_card.html" %}
+      {% set stat_title = "Server 5xx" %}{% set stat_value = "25" %}{% set stat_subtitle = "Butuh investigasi" %}{% set stat_tone = "danger" %}{% include "components/data/_stats_card.html" %}
+    </div>
+
+    <div class="mt-4 overflow-x-auto rounded-lg border border-border">
+      <table class="min-w-full divide-y divide-border text-sm">
+        <thead class="bg-page">
+          <tr>
+            <th class="px-4 py-3 text-left font-semibold text-muted">
+              {% set sortable_label = "Timestamp" %}
+              {% set sortable_href = "#timestamp-sort" %}
+              {% set sortable_active = true %}
+              {% set sortable_direction = "desc" %}
+              {% include "components/data/_sortable_header.html" %}
+            </th>
+            <th class="px-4 py-3 text-left font-semibold text-muted">Request Timeline</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-border bg-surface">
+          <tr>
+            <td class="px-4 py-3 text-xs text-muted">2026-10-07 14:00:21</td>
+            <td class="px-4 py-3">
+              {% set timeline_title = "GET /api/v1/services" %}
+              {% set timeline_meta = "req-abcd1234" %}
+              {% set timeline_description = "GET /api/v1/services -> 200 in 45.10ms req_id=req-abcd1234" %}
+              {% set timeline_badge = "INFO" %}
+              {% set timeline_badge_class = "bg-emerald-100 text-emerald-700" %}
+              {% include "components/data/_timeline_row.html" %}
+            </td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3 text-xs text-muted">2026-10-07 14:01:43</td>
+            <td class="px-4 py-3">
+              {% set timeline_title = "GET /api/v1/news/999999" %}
+              {% set timeline_meta = "req-efgh5678" %}
+              {% set timeline_description = "GET /api/v1/news/999999 -> 404 in 12.40ms req_id=req-efgh5678" %}
+              {% set timeline_badge = "WARNING" %}
+              {% set timeline_badge_class = "bg-amber-100 text-amber-700" %}
+              {% include "components/data/_timeline_row.html" %}
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </section>
 

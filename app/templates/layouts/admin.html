@@ -49,6 +49,7 @@
             <a href="/admin" class="rounded-md px-3 py-2 {{ 'bg-brand text-brand-foreground shadow-sm' if path == '/admin' else 'text-muted hover:bg-page hover:text-text' }}">Dashboard</a>
             <a href="/admin/news" class="rounded-md px-3 py-2 {{ 'bg-brand text-brand-foreground shadow-sm' if path.startswith('/admin/news') else 'text-muted hover:bg-page hover:text-text' }}">News</a>
             <a href="/admin/services" class="rounded-md px-3 py-2 {{ 'bg-brand text-brand-foreground shadow-sm' if path.startswith('/admin/services') else 'text-muted hover:bg-page hover:text-text' }}">Services</a>
+            <a href="/admin/pages" class="rounded-md px-3 py-2 {{ 'bg-brand text-brand-foreground shadow-sm' if path.startswith('/admin/pages') else 'text-muted hover:bg-page hover:text-text' }}">Pages</a>
             <a href="/admin/drafts" class="rounded-md px-3 py-2 {{ 'bg-brand text-brand-foreground shadow-sm' if path.startswith('/admin/drafts') else 'text-muted hover:bg-page hover:text-text' }}">
               Drafts
               {% if draft_count > 0 %}
@@ -57,12 +58,12 @@
             </a>
             <a href="/admin/media" class="rounded-md px-3 py-2 {{ 'bg-brand text-brand-foreground shadow-sm' if path.startswith('/admin/media') else 'text-muted hover:bg-page hover:text-text' }}">Media</a>
             <a href="/admin/canvas" class="rounded-md px-3 py-2 {{ 'bg-brand text-brand-foreground shadow-sm' if path.startswith('/admin/canvas') else 'text-muted hover:bg-page hover:text-text' }}">Canvas</a>
+            <a href="/admin/logger" class="rounded-md px-3 py-2 {{ 'bg-brand text-brand-foreground shadow-sm' if path.startswith('/admin/logger') else 'text-muted hover:bg-page hover:text-text' }}">Logger</a>
+            <a href="/admin/settings" class="rounded-md px-3 py-2 {{ 'bg-brand text-brand-foreground shadow-sm' if path.startswith('/admin/settings') else 'text-muted hover:bg-page hover:text-text' }}">Settings</a>
           </div>
           <div class="flex items-center gap-2">
-            <button type="button" class="btn-outline" onclick="window.setTheme('default')">Default</button>
-            <button type="button" class="btn-outline" onclick="window.setTheme('emerald')">Emerald</button>
-            <button type="button" class="btn-outline" onclick="window.setTheme('violet')">Violet</button>
-            <a href="/design-system" class="btn-outline">Design System</a>
+            {% set show_design_system_link = true %}
+            {% include "components/ui/_theme_switcher.html" %}
           </div>
         </div>
 
@@ -73,6 +74,7 @@
               <a href="/admin" class="rounded-md px-3 py-2 {{ 'bg-brand text-brand-foreground' if path == '/admin' else 'text-muted hover:bg-surface hover:text-text' }}">Dashboard</a>
               <a href="/admin/news" class="rounded-md px-3 py-2 {{ 'bg-brand text-brand-foreground' if path.startswith('/admin/news') else 'text-muted hover:bg-surface hover:text-text' }}">News</a>
               <a href="/admin/services" class="rounded-md px-3 py-2 {{ 'bg-brand text-brand-foreground' if path.startswith('/admin/services') else 'text-muted hover:bg-surface hover:text-text' }}">Services</a>
+              <a href="/admin/pages" class="rounded-md px-3 py-2 {{ 'bg-brand text-brand-foreground' if path.startswith('/admin/pages') else 'text-muted hover:bg-surface hover:text-text' }}">Pages</a>
               <a href="/admin/drafts" class="rounded-md px-3 py-2 {{ 'bg-brand text-brand-foreground' if path.startswith('/admin/drafts') else 'text-muted hover:bg-surface hover:text-text' }}">
                 Drafts
                 {% if draft_count > 0 %}
@@ -81,12 +83,13 @@
               </a>
               <a href="/admin/media" class="rounded-md px-3 py-2 {{ 'bg-brand text-brand-foreground' if path.startswith('/admin/media') else 'text-muted hover:bg-surface hover:text-text' }}">Media</a>
               <a href="/admin/canvas" class="rounded-md px-3 py-2 {{ 'bg-brand text-brand-foreground' if path.startswith('/admin/canvas') else 'text-muted hover:bg-surface hover:text-text' }}">Canvas</a>
+              <a href="/admin/logger" class="rounded-md px-3 py-2 {{ 'bg-brand text-brand-foreground' if path.startswith('/admin/logger') else 'text-muted hover:bg-surface hover:text-text' }}">Logger</a>
+              <a href="/admin/settings" class="rounded-md px-3 py-2 {{ 'bg-brand text-brand-foreground' if path.startswith('/admin/settings') else 'text-muted hover:bg-surface hover:text-text' }}">Settings</a>
               <a href="/design-system" class="rounded-md px-3 py-2 text-muted hover:bg-surface hover:text-text">Design System</a>
             </div>
             <div class="flex flex-wrap gap-2">
-              <button type="button" class="btn-outline" onclick="window.setTheme('default')">Default</button>
-              <button type="button" class="btn-outline" onclick="window.setTheme('emerald')">Emerald</button>
-              <button type="button" class="btn-outline" onclick="window.setTheme('violet')">Violet</button>
+              {% set show_design_system_link = false %}
+              {% include "components/ui/_theme_switcher.html" %}
             </div>
           </div>
         </details>
@@ -95,6 +98,7 @@
     <main class="container-app py-8">
       {% block content %}{% endblock %}
     </main>
+    {% include "components/ui/_site_footer.html" %}
     {% block extra_scripts %}{% endblock %}
   </body>
 </html>

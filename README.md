@@ -28,11 +28,15 @@ Reusable FastAPI boilerplate with modular monolith structure and PRG + HTMX + st
    - Design system: `/design-system`
    - Public news: `/news`
    - Public services: `/services`
+   - Public pages: `/pages`
    - Admin news: `/admin/news`
    - Admin services: `/admin/services`
+   - Admin pages: `/admin/pages`
    - Admin drafts manager: `/admin/drafts`
    - Admin media upload: `/admin/media`
    - Admin canvas editor: `/admin/canvas`
+   - Admin logger table: `/admin/logger`
+   - Admin settings: `/admin/settings`
    - Login: `/auth/login` (default: `admin` / `admin123`)
    - API docs: `/docs`
 
@@ -70,27 +74,65 @@ Reusable FastAPI boilerplate with modular monolith structure and PRG + HTMX + st
   - HTMX partial routes,
   - API `/api/v1/news`,
   - admin UX: duplicate item, autoslug, unsaved-changes warning, server-side draft autosave/restore, autosave status indicator, quick resume draft.
-  - admin list: pagination controls (prev/next) reusable.
+  - admin list: search + sort + status filter + pagination controls (prev/next) reusable.
 - `services` with:
   - public routes,
   - admin PRG routes,
   - HTMX partial routes,
   - API `/api/v1/services`,
   - admin UX: duplicate item, autoslug, unsaved-changes warning, server-side draft autosave/restore, autosave status indicator, quick resume draft.
-  - admin list: pagination controls (prev/next) reusable.
+  - admin list: search + sort + status filter + pagination controls (prev/next) reusable.
 - `auth` with:
   - login/logout session,
   - admin route protection.
 - `media` with:
   - API upload endpoint (`/api/v1/media/upload`),
+  - API list endpoint (`/api/v1/media/list`),
   - whitelist validasi tipe file (extension + MIME),
-  - validasi ukuran file maksimal via env.
+  - validasi ukuran file maksimal via env,
+  - reusable media picker component dipakai di media/news/services form.
+- `pages` with:
+  - public routes (`/pages`, `/pages/{slug}`),
+  - admin PRG routes (`/admin/pages`),
+  - API `/api/v1/pages`,
+  - status draft/published + slug uniqueness,
+  - admin list: search + sort + status filter + pagination.
+- `settings` with:
+  - admin settings form (`/admin/settings`) untuk `site_name`, `site_tagline`, `contact_email`,
+  - API read/update (`/api/v1/settings/site`),
+  - homepage hero membaca nilai settings agar branding bisa diganti tanpa ubah kode template.
+- `logger` with:
+  - request log persistence ke database (`request_logs`) dari middleware,
+  - admin table (`/admin/logger`) dengan pagination + search + filter level + filter status group,
+  - delete per item, delete selected, dan delete current page,
+  - retention cleanup (hapus log lama berdasarkan `keep_days` dan/atau batasi `max_rows`).
+
+## Design system reusable components
+
+- Atomic reusable:
+  - button (`.btn-primary`, `.btn-outline`, `.btn-danger`, disabled, loading),
+  - input/select/textarea (`.input-base` + focus/error state),
+  - form essentials components (`components/forms/*`): input group, checkbox, radio group, switch, file input,
+  - badge/status macro (`components/status/_macros.html`),
+  - alert reusable (`components/ui/_alert.html`).
+- Composite reusable:
+  - pagination (`components/pagination/_controls.html`),
+  - data display (`components/data/*`): stats card, sortable header, timeline/log row,
+  - empty state (`components/ui/_empty_state.html`),
+  - toast (`components/ui/_toast.html`),
+  - skeleton loader (`components/ui/_skeleton.html`),
+  - dropdown action menu (`components/ui/_dropdown_menu.html`),
+  - confirmation modal pattern (`components/ui/_confirm_action.html`),
+  - theme switcher (`components/ui/_theme_switcher.html`),
+  - shared footer (`components/ui/_site_footer.html`),
+  - modal skeleton (`components/ui/_modal.html`).
 
 ## Environment variables
 
 Base variables tersedia di [.env.example](E:/python/fast-boiler/.env.example):
 - `APP_NAME`
 - `APP_ENV`
+- `LOG_LEVEL`
 - `SECRET_KEY`
 - `DB_URL`
 - `SESSION_COOKIE_NAME`
@@ -131,6 +173,10 @@ Audit fields:
 RBAC canvas:
 - `canvas.read` untuk membaca daftar/muatan dokumen.
 - `canvas.manage` untuk simpan/rename/delete dokumen canvas.
+
+Logging:
+- request/response logging aktif via middleware (status + durasi + request_id).
+- exception/validation logging aktif untuk troubleshooting API.
 
 Cleanup expired drafts:
 - `python scripts/cleanup_drafts.py`

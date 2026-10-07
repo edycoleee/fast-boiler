@@ -1,0 +1,11 @@
+{% set alert_tone = alert_tone | default("info") %}
+{% if alert_tone == "success" %}
+  {% set alert_class = "border-emerald-300 bg-emerald-50 text-emerald-800" %}
+{% elif alert_tone == "warning" %}
+  {% set alert_class = "border-amber-300 bg-amber-50 text-amber-800" %}
+{% elif alert_tone == "danger" %}
+  {% set alert_class = "border-red-200 bg-red-50 text-red-700" %}
+{% else %}
+  {% set alert_class = "border-blue-300 bg-blue-50 text-blue-800" %}
+{% endif %}
+<div class="mb-4 rounded-lg border px-4 py-3 text-sm {{ alert_class }}">{{ alert_message }}</div>

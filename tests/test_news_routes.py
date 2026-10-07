@@ -15,7 +15,7 @@ def test_root_landing_page():
     with TestClient(app) as client:
         response = client.get("/")
         assert response.status_code == 200
-        assert "Modern Corporate Landing Template" in response.text
+        assert "Fast Boiler" in response.text
 
 
 def test_news_api_list_shape():

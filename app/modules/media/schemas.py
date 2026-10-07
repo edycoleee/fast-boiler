@@ -10,3 +10,8 @@ class MediaUploadResult(BaseModel):
     size: int
     path: str
 
+
+class MediaItemOut(BaseModel):
+    name: str
+    size: int
+    path: str

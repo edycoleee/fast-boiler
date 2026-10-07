@@ -1,0 +1,12 @@
+{% set skeleton_lines = skeleton_lines | default(3) %}
+{% set skeleton_title = skeleton_title | default(true) %}
+<div class="rounded-lg border border-border bg-surface p-4">
+  {% if skeleton_title %}
+    <div class="skeleton mb-3 h-4 w-40 rounded"></div>
+  {% endif %}
+  <div class="space-y-2">
+    {% for _ in range(skeleton_lines) %}
+      <div class="skeleton h-3 rounded {{ 'w-11/12' if loop.index == 1 else ('w-full' if loop.index != skeleton_lines else 'w-9/12') }}"></div>
+    {% endfor %}
+  </div>
+</div>

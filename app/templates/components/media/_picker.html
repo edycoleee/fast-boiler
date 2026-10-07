@@ -1,0 +1,23 @@
+<section class="card p-4">
+  <div class="mb-3 flex items-center justify-between gap-2">
+    <h3 class="text-sm font-semibold uppercase tracking-wide text-muted">Media Picker</h3>
+    <button id="media-picker-refresh" type="button" class="btn-outline">Refresh</button>
+  </div>
+  {% set target_input_id = media_picker_target_input_id if media_picker_target_input_id else '' %}
+  <div id="media-picker-list" data-target-input-id="{{ target_input_id }}" class="space-y-2 text-sm">
+    {% if recent_media %}
+      {% for media in recent_media %}
+        <div class="rounded-lg border border-border bg-page px-3 py-2">
+          <p class="font-medium text-text">{{ media.name }}</p>
+          <p class="text-xs text-muted">{{ media.size }} bytes</p>
+          <div class="mt-2 flex flex-wrap gap-2">
+            <button type="button" class="btn-outline media-picker-use" data-media-path="{{ media.path }}">Use Path</button>
+            <button type="button" class="btn-outline media-picker-copy" data-media-path="{{ media.path }}">Copy Path</button>
+          </div>
+        </div>
+      {% endfor %}
+    {% else %}
+      <p class="text-xs text-muted">Belum ada file upload.</p>
+    {% endif %}
+  </div>
+</section>

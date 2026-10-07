@@ -1,0 +1,16 @@
+{% set modal_open = modal_open if modal_open is defined else true %}
+<dialog class="w-full max-w-xl rounded-xl2 border border-border bg-surface p-0 shadow-soft" {% if modal_open %}open{% endif %}>
+  <article class="p-5">
+    <header class="mb-2 flex items-center justify-between gap-3 border-b border-border pb-3">
+      <h3 class="text-lg font-semibold">{{ modal_title }}</h3>
+      <span class="text-xs text-muted">Sample modal component</span>
+    </header>
+    <div class="py-3 text-sm text-muted">
+      {{ modal_content }}
+    </div>
+    <footer class="mt-2 flex justify-end gap-2 border-t border-border pt-3">
+      <button type="button" class="btn-outline">Cancel</button>
+      <button type="button" class="btn-primary">Confirm</button>
+    </footer>
+  </article>
+</dialog>

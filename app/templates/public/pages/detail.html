@@ -1,0 +1,13 @@
+{% extends "layouts/public.html" %}
+{% block title %}{{ item.title }} - Fast Boiler{% endblock %}
+{% block content %}
+  {% set page_eyebrow = "Page Detail" %}
+  {% set page_title = item.title %}
+  {% set page_description = item.summary if item.summary else "Informasi halaman publik." %}
+  {% include "components/marketing/_page_header.html" %}
+
+  <article class="card mb-8">
+    <div class="mb-4">{{ item.content }}</div>
+    <p><a class="text-sm text-brand hover:underline" href="/pages">Back to pages</a></p>
+  </article>
+{% endblock %}

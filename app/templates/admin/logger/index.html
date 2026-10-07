@@ -1,0 +1,233 @@
+{% extends "layouts/admin.html" %}
+{% block title %}Logger Table{% endblock %}
+{% block content %}
+  {% set page_eyebrow = "Monitoring" %}
+  {% set page_title = "Logger Table" %}
+  {% set page_description = "Tabel log request aplikasi dengan aksi hapus per item, bulk terpilih, dan hapus per halaman." %}
+  {% include "components/marketing/_page_header.html" %}
+
+  {% if result == "deleted" %}
+    {% set alert_tone = "success" %}{% set alert_message = "Log berhasil dihapus." %}{% include "components/ui/_alert.html" %}
+  {% elif result == "not-found" %}
+    {% set alert_tone = "warning" %}{% set alert_message = "Log tidak ditemukan." %}{% include "components/ui/_alert.html" %}
+  {% elif result == "bulk-deleted" %}
+    {% set alert_tone = "success" %}{% set alert_message = "Log terpilih berhasil dihapus." %}{% include "components/ui/_alert.html" %}
+  {% elif result == "bulk-empty" %}
+    {% set alert_tone = "warning" %}{% set alert_message = "Tidak ada log yang dipilih." %}{% include "components/ui/_alert.html" %}
+  {% elif result == "page-deleted" %}
+    {% set alert_tone = "success" %}{% set alert_message = "Log pada halaman ini berhasil dihapus." %}{% include "components/ui/_alert.html" %}
+  {% elif result == "page-empty" %}
+    {% set alert_tone = "warning" %}{% set alert_message = "Tidak ada log pada halaman ini." %}{% include "components/ui/_alert.html" %}
+  {% elif result == "retention-cleaned" %}
+    {% set alert_tone = "success" %}{% set alert_message = "Retention cleanup selesai. " ~ (deleted_count or 0) ~ " log terhapus." %}{% include "components/ui/_alert.html" %}
+  {% elif result == "retention-empty" %}
+    {% set alert_tone = "warning" %}{% set alert_message = "Isi minimal satu parameter retention: keep days atau max rows." %}{% include "components/ui/_alert.html" %}
+  {% elif result == "retention-invalid" %}
+    {% set alert_tone = "danger" %}{% set alert_message = "Parameter retention tidak valid. Gunakan angka 0 atau lebih." %}{% include "components/ui/_alert.html" %}
+  {% endif %}
+
+  <section class="card p-5">
+    {% set stats = namespace(info=0, warning=0, error=0, status_2xx=0, status_4xx=0, status_5xx=0) %}
+    {% for item in items %}
+      {% if item.level == "INFO" %}{% set stats.info = stats.info + 1 %}{% endif %}
+      {% if item.level == "WARNING" %}{% set stats.warning = stats.warning + 1 %}{% endif %}
+      {% if item.level == "ERROR" %}{% set stats.error = stats.error + 1 %}{% endif %}
+      {% if item.status_code >= 200 and item.status_code < 300 %}{% set stats.status_2xx = stats.status_2xx + 1 %}{% endif %}
+      {% if item.status_code >= 400 and item.status_code < 500 %}{% set stats.status_4xx = stats.status_4xx + 1 %}{% endif %}
+      {% if item.status_code >= 500 and item.status_code < 600 %}{% set stats.status_5xx = stats.status_5xx + 1 %}{% endif %}
+    {% endfor %}
+    <div class="mb-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+      {% set stat_title = "Total (Filtered)" %}{% set stat_value = total %}{% set stat_subtitle = "Jumlah log sesuai filter aktif." %}{% set stat_tone = "default" %}{% include "components/data/_stats_card.html" %}
+      {% set stat_title = "INFO / 2xx" %}{% set stat_value = stats.info ~ " / " ~ stats.status_2xx %}{% set stat_subtitle = "Traffic normal." %}{% set stat_tone = "success" %}{% include "components/data/_stats_card.html" %}
+      {% set stat_title = "WARNING / 4xx" %}{% set stat_value = stats.warning ~ " / " ~ stats.status_4xx %}{% set stat_subtitle = "Perlu review validasi/request." %}{% set stat_tone = "warning" %}{% include "components/data/_stats_card.html" %}
+      {% set stat_title = "ERROR / 5xx" %}{% set stat_value = stats.error ~ " / " ~ stats.status_5xx %}{% set stat_subtitle = "Prioritas investigasi." %}{% set stat_tone = "danger" %}{% include "components/data/_stats_card.html" %}
+    </div>
+
+    <form class="mb-4 flex flex-wrap items-end gap-3 rounded-lg border border-border bg-page px-3 py-3" method="get" action="/admin/logger">
+      <div class="min-w-56 flex-1">
+        <label class="mb-1 block text-xs font-medium uppercase tracking-wide text-muted" for="q">Search</label>
+        <input id="q" name="q" value="{{ q if q else '' }}" class="input-base" placeholder="Path, request id, message..." />
+      </div>
+      <div>
+        <label class="mb-1 block text-xs font-medium uppercase tracking-wide text-muted" for="level_filter">Level</label>
+        <select id="level_filter" name="level_filter" class="input-base min-w-32">
+          <option value="" {% if not level_filter %}selected{% endif %}>All</option>
+          <option value="INFO" {% if level_filter == "INFO" %}selected{% endif %}>INFO</option>
+          <option value="WARNING" {% if level_filter == "WARNING" %}selected{% endif %}>WARNING</option>
+          <option value="ERROR" {% if level_filter == "ERROR" %}selected{% endif %}>ERROR</option>
+        </select>
+      </div>
+      <div>
+        <label class="mb-1 block text-xs font-medium uppercase tracking-wide text-muted" for="status_group">Status Group</label>
+        <select id="status_group" name="status_group" class="input-base min-w-32">
+          <option value="" {% if not status_group %}selected{% endif %}>All</option>
+          <option value="2xx" {% if status_group == "2xx" %}selected{% endif %}>2xx</option>
+          <option value="4xx" {% if status_group == "4xx" %}selected{% endif %}>4xx</option>
+          <option value="5xx" {% if status_group == "5xx" %}selected{% endif %}>5xx</option>
+        </select>
+      </div>
+      <div>
+        <label class="mb-1 block text-xs font-medium uppercase tracking-wide text-muted" for="sort">Sort</label>
+        <select id="sort" name="sort" class="input-base min-w-40">
+          <option value="newest" {% if (sort or "newest") == "newest" %}selected{% endif %}>Newest</option>
+          <option value="oldest" {% if sort == "oldest" %}selected{% endif %}>Oldest</option>
+        </select>
+      </div>
+      <div>
+        <label class="mb-1 block text-xs font-medium uppercase tracking-wide text-muted" for="per_page">Rows per page</label>
+        <select id="per_page" name="per_page" class="input-base min-w-28">
+          <option value="20" {% if (per_page or 20) == 20 %}selected{% endif %}>20</option>
+          <option value="50" {% if per_page == 50 %}selected{% endif %}>50</option>
+          <option value="100" {% if per_page == 100 %}selected{% endif %}>100</option>
+        </select>
+      </div>
+      <input type="hidden" name="page" value="1" />
+      <button type="submit" class="btn-outline">Apply</button>
+      <a href="/admin/logger" class="btn-outline">Reset</a>
+    </form>
+
+    <div class="mb-3 flex flex-wrap items-center justify-between gap-2">
+      <div class="flex items-center gap-2">
+        <button form="logger-bulk-form" type="submit" class="btn-danger" onclick="return confirm('Hapus semua log yang dipilih?');">Delete Selected</button>
+        <button form="logger-delete-page-form" type="submit" class="btn-outline" onclick="return confirm('Hapus semua log pada halaman ini?');">Delete This Page</button>
+      </div>
+      <p class="text-xs text-muted">Centang baris untuk delete terpilih atau gunakan delete per halaman.</p>
+    </div>
+    <form class="mb-4 grid gap-3 rounded-lg border border-border bg-page p-3 md:grid-cols-[1fr_1fr_auto]" method="post" action="/admin/logger/retention-cleanup">
+      <div>
+        <label class="mb-1 block text-xs font-medium uppercase tracking-wide text-muted" for="keep_days">Keep Days</label>
+        <input id="keep_days" name="keep_days" type="number" min="0" placeholder="Contoh: 30" value="{{ keep_days_q if keep_days_q else '' }}" class="input-base" />
+        <p class="mt-1 text-xs text-muted">Hapus log lebih lama dari N hari.</p>
+      </div>
+      <div>
+        <label class="mb-1 block text-xs font-medium uppercase tracking-wide text-muted" for="max_rows">Max Rows</label>
+        <input id="max_rows" name="max_rows" type="number" min="0" placeholder="Contoh: 10000" value="{{ max_rows_q if max_rows_q else '' }}" class="input-base" />
+        <p class="mt-1 text-xs text-muted">Pertahankan maksimal N log terbaru.</p>
+      </div>
+      <div class="flex items-end">
+        <button type="submit" class="btn-outline w-full" onclick="return confirm('Jalankan cleanup retention logger?');">Run Retention Cleanup</button>
+      </div>
+      <input type="hidden" name="page" value="{{ page }}" />
+      <input type="hidden" name="per_page" value="{{ per_page }}" />
+      <input type="hidden" name="q" value="{{ q if q else '' }}" />
+      <input type="hidden" name="level_filter" value="{{ level_filter if level_filter else '' }}" />
+      <input type="hidden" name="status_group" value="{{ status_group if status_group else '' }}" />
+      <input type="hidden" name="sort" value="{{ sort if sort else 'newest' }}" />
+    </form>
+
+    {% if items %}
+      {% set toggled_sort = 'oldest' if sort == 'newest' else 'newest' %}
+      {% set sort_dir = 'desc' if sort == 'newest' else 'asc' %}
+      {% set base_qs = 'page=1&per_page=' ~ per_page ~ '&q=' ~ (q|default('', true)|urlencode) ~ '&level_filter=' ~ (level_filter|default('', true)|urlencode) ~ '&status_group=' ~ (status_group|default('', true)|urlencode) %}
+      <div class="overflow-x-auto rounded-lg border border-border">
+          <table class="min-w-full divide-y divide-border text-sm">
+            <thead class="bg-page">
+              <tr>
+                <th class="px-4 py-3 text-left font-semibold text-muted"><input id="select-all-logs" type="checkbox" /></th>
+                <th class="px-4 py-3 text-left font-semibold text-muted">
+                  {% set sortable_label = "Time" %}
+                  {% set sortable_href = "/admin/logger?" ~ base_qs ~ "&sort=" ~ toggled_sort %}
+                  {% set sortable_active = true %}
+                  {% set sortable_direction = sort_dir %}
+                  {% include "components/data/_sortable_header.html" %}
+                </th>
+                <th class="px-4 py-3 text-left font-semibold text-muted">Request</th>
+                <th class="px-4 py-3 text-left font-semibold text-muted">Status</th>
+                <th class="px-4 py-3 text-left font-semibold text-muted">Duration</th>
+                <th class="px-4 py-3 text-right font-semibold text-muted">Action</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-border bg-surface">
+              {% for item in items %}
+                <tr>
+                  <td class="px-4 py-3"><input class="log-checkbox" type="checkbox" name="log_ids" value="{{ item.id }}" form="logger-bulk-form" /></td>
+                  <td class="px-4 py-3 text-xs text-muted">{{ item.created_at }}</td>
+                  <td class="px-4 py-3">
+                    {% set timeline_title = item.method ~ " " ~ item.path %}
+                    {% set timeline_meta = item.request_id %}
+                    {% set timeline_description = item.message %}
+                    {% set timeline_badge = item.level %}
+                    {% set timeline_badge_class = 'bg-red-100 text-red-700' if item.level == 'ERROR' else ('bg-amber-100 text-amber-700' if item.level == 'WARNING' else 'bg-emerald-100 text-emerald-700') %}
+                    {% include "components/data/_timeline_row.html" %}
+                  </td>
+                  <td class="px-4 py-3">
+                    <span class="rounded-full px-2 py-1 text-xs {{ 'bg-red-100 text-red-700' if item.status_code >= 500 else ('bg-amber-100 text-amber-700' if item.status_code >= 400 else 'bg-emerald-100 text-emerald-700') }}">
+                      {{ item.status_code }} / {{ item.level }}
+                    </span>
+                  </td>
+                  <td class="px-4 py-3 text-xs text-muted">{{ item.duration_ms }} ms</td>
+                  <td class="px-4 py-3">
+                    <div class="flex justify-end">
+                      <form action="/admin/logger/delete" method="post" onsubmit="return confirm('Hapus log ini?');">
+                        <input type="hidden" name="log_id" value="{{ item.id }}" />
+                        <input type="hidden" name="page" value="{{ page }}" />
+                        <input type="hidden" name="per_page" value="{{ per_page }}" />
+                        <input type="hidden" name="q" value="{{ q if q else '' }}" />
+                        <input type="hidden" name="level_filter" value="{{ level_filter if level_filter else '' }}" />
+                        <input type="hidden" name="status_group" value="{{ status_group if status_group else '' }}" />
+                        <input type="hidden" name="sort" value="{{ sort if sort else 'newest' }}" />
+                        <button type="submit" class="btn-danger">Delete</button>
+                      </form>
+                    </div>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% set total_pages = ((total + per_page - 1) // per_page) if per_page > 0 else 1 %}
+        {% set query_tail = '&q=' ~ (q|default('', true)|urlencode) ~ '&level_filter=' ~ (level_filter|default('', true)|urlencode) ~ '&status_group=' ~ (status_group|default('', true)|urlencode) ~ '&sort=' ~ (sort|default('newest', true)|urlencode) %}
+        <div class="mt-3 flex flex-wrap items-center justify-between gap-2 text-xs text-muted">
+          <p>Total items: <span class="font-semibold text-text">{{ total }}</span></p>
+          <div class="flex items-center gap-2">
+            {% if page > 1 %}
+              <a href="/admin/logger?page={{ page - 1 }}&per_page={{ per_page }}{{ query_tail }}" class="btn-outline">Prev</a>
+            {% else %}
+              <span class="btn-outline pointer-events-none opacity-50">Prev</span>
+            {% endif %}
+            <p>Page <span class="font-semibold text-text">{{ page }}</span> / <span class="font-semibold text-text">{{ total_pages }}</span></p>
+            {% if page < total_pages %}
+              <a href="/admin/logger?page={{ page + 1 }}&per_page={{ per_page }}{{ query_tail }}" class="btn-outline">Next</a>
+            {% else %}
+              <span class="btn-outline pointer-events-none opacity-50">Next</span>
+            {% endif %}
+          </div>
+        </div>
+      {% else %}
+      {% set empty_title = "No logs found." %}
+      {% set empty_description = "Belum ada data logger untuk ditampilkan." %}
+      {% include "components/ui/_empty_state.html" %}
+    {% endif %}
+
+    <form id="logger-bulk-form" method="post" action="/admin/logger/bulk-delete">
+      <input type="hidden" name="page" value="{{ page }}" />
+      <input type="hidden" name="per_page" value="{{ per_page }}" />
+      <input type="hidden" name="q" value="{{ q if q else '' }}" />
+      <input type="hidden" name="level_filter" value="{{ level_filter if level_filter else '' }}" />
+      <input type="hidden" name="status_group" value="{{ status_group if status_group else '' }}" />
+      <input type="hidden" name="sort" value="{{ sort if sort else 'newest' }}" />
+    </form>
+
+    <form id="logger-delete-page-form" action="/admin/logger/delete-page" method="post">
+      <input type="hidden" name="page" value="{{ page }}" />
+      <input type="hidden" name="per_page" value="{{ per_page }}" />
+      <input type="hidden" name="q" value="{{ q if q else '' }}" />
+      <input type="hidden" name="level_filter" value="{{ level_filter if level_filter else '' }}" />
+      <input type="hidden" name="status_group" value="{{ status_group if status_group else '' }}" />
+      <input type="hidden" name="sort" value="{{ sort if sort else 'newest' }}" />
+    </form>
+  </section>
+{% endblock %}
+
+{% block extra_scripts %}
+  <script>
+    (function () {
+      var selectAll = document.getElementById("select-all-logs");
+      if (!selectAll) return;
+      var boxes = Array.prototype.slice.call(document.querySelectorAll(".log-checkbox"));
+      selectAll.addEventListener("change", function () {
+        boxes.forEach(function (box) { box.checked = selectAll.checked; });
+      });
+    })();
+  </script>
+{% endblock %}

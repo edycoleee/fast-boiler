@@ -20,10 +20,10 @@
   {% set full_url_prefix = '/admin/news' %}
   {% set partial_url_prefix = '/admin/news/partials/table' %}
   {% set hx_target_id = '#news-table-container' %}
+  {% set extra_query = '&q=' ~ (q|default('', true)|urlencode) ~ '&status_filter=' ~ (status_filter|default('', true)|urlencode) ~ '&sort=' ~ (sort|default('created_desc', true)|urlencode) %}
   {% include "components/pagination/_controls.html" %}
 {% else %}
-  <div class="rounded-lg border border-dashed border-border bg-page px-4 py-8 text-center">
-    <p class="text-sm font-medium text-text">No news found.</p>
-    <p class="mt-1 text-xs text-muted">Mulai dengan membuat artikel baru untuk mengisi daftar.</p>
-  </div>
+  {% set empty_title = "No news found." %}
+  {% set empty_description = "Mulai dengan membuat artikel baru untuk mengisi daftar." %}
+  {% include "components/ui/_empty_state.html" %}
 {% endif %}

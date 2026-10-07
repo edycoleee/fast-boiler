@@ -1,0 +1,46 @@
+{% extends "layouts/admin.html" %}
+{% block title %}{{ "Create" if mode == "create" else "Edit" }} Page{% endblock %}
+{% block content %}
+  {% set page_eyebrow = "Content Management" %}
+  {% set page_title = ("Create Page" if mode == "create" else "Edit Page") %}
+  {% set page_description = "Bangun halaman statis yang rapi dan mudah dipelihara untuk kebutuhan informasi publik." %}
+  {% include "components/marketing/_page_header.html" %}
+
+  {% if error %}
+    <div class="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{{ error }}</div>
+  {% endif %}
+
+  <section class="card p-6">
+    <form action="{{ action }}" method="post" class="space-y-5">
+      <div class="grid gap-5 md:grid-cols-2">
+        <div>
+          <label class="mb-1 block text-sm font-medium" for="title">Title</label>
+          <input id="title" name="title" value="{{ item.title if item else '' }}" class="input-base" required />
+        </div>
+        <div>
+          <label class="mb-1 block text-sm font-medium" for="slug">Slug</label>
+          <input id="slug" name="slug" value="{{ item.slug if item else '' }}" class="input-base font-mono" required />
+        </div>
+      </div>
+      <div>
+        <label class="mb-1 block text-sm font-medium" for="summary">Summary</label>
+        <textarea id="summary" name="summary" class="input-base min-h-24">{{ item.summary if item and item.summary else '' }}</textarea>
+      </div>
+      <div>
+        <label class="mb-1 block text-sm font-medium" for="content">Content</label>
+        <textarea id="content" name="content" class="input-base min-h-64" required>{{ item.content if item else '' }}</textarea>
+      </div>
+      <div class="max-w-56">
+        <label class="mb-1 block text-sm font-medium" for="status">Status</label>
+        <select id="status" name="status" class="input-base">
+          <option value="draft" {% if item and item.status == "draft" %}selected{% endif %}>Draft</option>
+          <option value="published" {% if item and item.status == "published" %}selected{% endif %}>Published</option>
+        </select>
+      </div>
+      <div class="flex flex-wrap items-center gap-2 border-t border-border pt-4">
+        <button type="submit" class="btn-primary">Save Page</button>
+        <a href="/admin/pages" class="btn-outline">Cancel</a>
+      </div>
+    </form>
+  </section>
+{% endblock %}
