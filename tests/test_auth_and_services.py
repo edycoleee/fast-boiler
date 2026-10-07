@@ -57,6 +57,11 @@ def test_login_and_access_admin_pages():
 
         news_response = client.get("/admin/news")
         assert news_response.status_code == 200
+        assert "Table utilities tersedia" in news_response.text
+
+        news_create_response = client.get("/admin/news/new")
+        assert news_create_response.status_code == 200
+        assert "Breadcrumb" in news_create_response.text
 
         services_response = client.get("/admin/services")
         assert services_response.status_code == 200
@@ -78,6 +83,7 @@ def test_login_and_access_admin_pages():
 
         settings_response = client.get("/admin/settings")
         assert settings_response.status_code == 200
+        assert "Branding Guidance" in settings_response.text
 
 
 def test_news_admin_prg_create_redirect():

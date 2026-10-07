@@ -1,0 +1,43 @@
+{% set tabs_id = tabs_id | default("tabs-demo") %}
+{% set tabs = tabs | default([]) %}
+<div data-tabs="{{ tabs_id }}">
+  <div class="flex flex-wrap gap-2 border-b border-border pb-2" role="tablist" aria-label="Tabs">
+    {% for tab in tabs %}
+      {% set trigger_id = tabs_id ~ "-tab-" ~ loop.index %}
+      {% set panel_id = tabs_id ~ "-panel-" ~ loop.index %}
+      {% set is_active = tab.active if tab.active is defined else loop.first %}
+      <button
+        id="{{ trigger_id }}"
+        type="button"
+        role="tab"
+        aria-controls="{{ panel_id }}"
+        aria-selected="{{ 'true' if is_active else 'false' }}"
+        data-tab-trigger
+        data-tab-target="{{ panel_id }}"
+        class="tab-btn {{ 'tab-btn-active' if is_active else '' }}"
+      >
+        {{ tab.label }}
+      </button>
+    {% endfor %}
+  </div>
+
+  <div class="mt-3 space-y-3">
+    {% for tab in tabs %}
+      {% set panel_id = tabs_id ~ "-panel-" ~ loop.index %}
+      {% set is_active = tab.active if tab.active is defined else loop.first %}
+      <section
+        id="{{ panel_id }}"
+        role="tabpanel"
+        aria-labelledby="{{ tabs_id ~ '-tab-' ~ loop.index }}"
+        data-tab-panel
+        {% if not is_active %}hidden{% endif %}
+        class="rounded-lg border border-border bg-page p-3 text-sm"
+      >
+        {% if tab.title %}
+          <h3 class="mb-1 font-semibold text-text">{{ tab.title }}</h3>
+        {% endif %}
+        <p class="text-muted">{{ tab.description }}</p>
+      </section>
+    {% endfor %}
+  </div>
+</div>

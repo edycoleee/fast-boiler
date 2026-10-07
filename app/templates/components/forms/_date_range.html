@@ -1,0 +1,23 @@
+{% set date_range_id = date_range_id | default("date-range") %}
+{% set date_range_label = date_range_label | default("Date Range") %}
+{% set date_start_name = date_start_name | default("start_date") %}
+{% set date_end_name = date_end_name | default("end_date") %}
+{% set date_start_value = date_start_value | default("") %}
+{% set date_end_value = date_end_value | default("") %}
+{% set date_range_help = date_range_help | default("") %}
+<fieldset>
+  <legend class="mb-1 text-sm font-medium">{{ date_range_label }}</legend>
+  <div class="grid gap-2 sm:grid-cols-2">
+    <div>
+      <label class="mb-1 block text-xs uppercase tracking-wide text-muted" for="{{ date_range_id }}-start">Start</label>
+      <input id="{{ date_range_id }}-start" name="{{ date_start_name }}" type="date" value="{{ date_start_value }}" class="input-base" />
+    </div>
+    <div>
+      <label class="mb-1 block text-xs uppercase tracking-wide text-muted" for="{{ date_range_id }}-end">End</label>
+      <input id="{{ date_range_id }}-end" name="{{ date_end_name }}" type="date" value="{{ date_end_value }}" class="input-base" />
+    </div>
+  </div>
+  {% if date_range_help %}
+    <p class="mt-1 text-xs text-muted">{{ date_range_help }}</p>
+  {% endif %}
+</fieldset>

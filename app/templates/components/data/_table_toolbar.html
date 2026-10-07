@@ -1,0 +1,29 @@
+{% set toolbar_title = toolbar_title | default("Table Utilities") %}
+{% set toolbar_description = toolbar_description | default("Pilih baris dan atur kolom yang ditampilkan.") %}
+{% set table_id = table_id | default("table-demo") %}
+{% set column_toggles = column_toggles | default([]) %}
+<div class="rounded-lg border border-border bg-page p-3" data-table-controls="{{ table_id }}">
+  <div class="flex flex-wrap items-start justify-between gap-3">
+    <div>
+      <p class="text-sm font-semibold text-text">{{ toolbar_title }}</p>
+      <p class="text-xs text-muted">{{ toolbar_description }}</p>
+    </div>
+    <div class="inline-flex items-center gap-2 rounded-lg border border-border bg-surface px-2 py-1 text-xs">
+      <span class="text-muted">Selected:</span>
+      <strong data-selected-count>0</strong>
+    </div>
+  </div>
+
+  <div class="mt-3 flex flex-wrap items-center gap-2">
+    <label class="inline-flex items-center gap-2 rounded-md border border-border px-2 py-1 text-xs">
+      <input type="checkbox" data-select-all />
+      <span>Select current page</span>
+    </label>
+    {% for col in column_toggles %}
+      <label class="inline-flex items-center gap-2 rounded-md border border-border px-2 py-1 text-xs">
+        <input type="checkbox" data-col-toggle="{{ col.key }}" {% if col.visible %}checked{% endif %} />
+        <span>{{ col.label }}</span>
+      </label>
+    {% endfor %}
+  </div>
+</div>

@@ -112,12 +112,13 @@ Reusable FastAPI boilerplate with modular monolith structure and PRG + HTMX + st
 - Atomic reusable:
   - button (`.btn-primary`, `.btn-outline`, `.btn-danger`, disabled, loading),
   - input/select/textarea (`.input-base` + focus/error state),
-  - form essentials components (`components/forms/*`): input group, checkbox, radio group, switch, file input,
+  - form essentials components (`components/forms/*`): input group, checkbox, radio group, switch, file input, date range, multi select,
   - badge/status macro (`components/status/_macros.html`),
   - alert reusable (`components/ui/_alert.html`).
 - Composite reusable:
+  - navigation (`components/navigation/*`): breadcrumb, tabs,
   - pagination (`components/pagination/_controls.html`),
-  - data display (`components/data/*`): stats card, sortable header, timeline/log row,
+  - data display (`components/data/*`): stats card, sortable header, timeline/log row, table toolbar (bulk + column toggle),
   - empty state (`components/ui/_empty_state.html`),
   - toast (`components/ui/_toast.html`),
   - skeleton loader (`components/ui/_skeleton.html`),
@@ -126,6 +127,10 @@ Reusable FastAPI boilerplate with modular monolith structure and PRG + HTMX + st
   - theme switcher (`components/ui/_theme_switcher.html`),
   - shared footer (`components/ui/_site_footer.html`),
   - modal skeleton (`components/ui/_modal.html`).
+
+Applied examples:
+- Admin News memakai breadcrumb + table toolbar utilities (`/admin/news` dan `/admin/news/new`).
+- Admin Settings memakai breadcrumb + tabs guidance (`/admin/settings`).
 
 ## Environment variables
 

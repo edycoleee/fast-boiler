@@ -1,13 +1,27 @@
 {% if items %}
+  {% set toolbar_title = "News Table Utilities" %}
+  {% set toolbar_description = "Gunakan select current page untuk menghitung baris terpilih dan atur visibilitas kolom untuk fokus review." %}
+  {% set table_id = "news-admin-table" %}
+  {% set column_toggles = [
+    {"key": "id", "label": "ID", "visible": true},
+    {"key": "title", "label": "Title", "visible": true},
+    {"key": "slug", "label": "Slug", "visible": true},
+    {"key": "status", "label": "Status", "visible": true},
+    {"key": "actions", "label": "Actions", "visible": true}
+  ] %}
+  <div class="mb-3">
+    {% include "components/data/_table_toolbar.html" %}
+  </div>
   <div class="overflow-x-auto rounded-lg border border-border">
-    <table class="min-w-full divide-y divide-border text-sm">
+    <table id="news-admin-table" class="min-w-full divide-y divide-border text-sm">
       <thead class="bg-page">
         <tr>
-          <th class="px-4 py-3 text-left font-semibold text-muted">ID</th>
-          <th class="px-4 py-3 text-left font-semibold text-muted">Title</th>
-          <th class="px-4 py-3 text-left font-semibold text-muted">Slug</th>
-          <th class="px-4 py-3 text-left font-semibold text-muted">Status</th>
-          <th class="px-4 py-3 text-right font-semibold text-muted">Actions</th>
+          <th class="px-4 py-3 text-left font-semibold text-muted">Select</th>
+          <th class="px-4 py-3 text-left font-semibold text-muted" data-col="id">ID</th>
+          <th class="px-4 py-3 text-left font-semibold text-muted" data-col="title">Title</th>
+          <th class="px-4 py-3 text-left font-semibold text-muted" data-col="slug">Slug</th>
+          <th class="px-4 py-3 text-left font-semibold text-muted" data-col="status">Status</th>
+          <th class="px-4 py-3 text-right font-semibold text-muted" data-col="actions">Actions</th>
         </tr>
       </thead>
       <tbody class="divide-y divide-border bg-surface">

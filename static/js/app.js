@@ -72,4 +72,86 @@
       }
     }
   });
+
+  document.addEventListener("click", function (event) {
+    var tabTrigger = event.target.closest("[data-tab-trigger]");
+    if (!tabTrigger) return;
+    var tabContainer = tabTrigger.closest("[data-tabs]");
+    if (!tabContainer) return;
+    var targetId = tabTrigger.getAttribute("data-tab-target");
+    if (!targetId) return;
+
+    var allTriggers = tabContainer.querySelectorAll("[data-tab-trigger]");
+    for (var i = 0; i < allTriggers.length; i += 1) {
+      allTriggers[i].setAttribute("aria-selected", "false");
+      allTriggers[i].classList.remove("tab-btn-active");
+    }
+    tabTrigger.setAttribute("aria-selected", "true");
+    tabTrigger.classList.add("tab-btn-active");
+
+    var panels = tabContainer.querySelectorAll("[data-tab-panel]");
+    for (var j = 0; j < panels.length; j += 1) {
+      panels[j].setAttribute("hidden", "");
+    }
+    var targetPanel = document.getElementById(targetId);
+    if (targetPanel) {
+      targetPanel.removeAttribute("hidden");
+    }
+  });
+
+  function updateTableSelectionCount(container, table) {
+    var countNode = container.querySelector("[data-selected-count]");
+    if (!countNode) return;
+    var rows = table.querySelectorAll("[data-row-select]");
+    var selected = 0;
+    for (var i = 0; i < rows.length; i += 1) {
+      if (rows[i].checked) selected += 1;
+    }
+    countNode.textContent = String(selected);
+  }
+
+  function setColumnVisibility(table, columnKey, visible) {
+    var cells = table.querySelectorAll('[data-col="' + columnKey + '"]');
+    for (var i = 0; i < cells.length; i += 1) {
+      cells[i].hidden = !visible;
+    }
+  }
+
+  document.addEventListener("change", function (event) {
+    var tableControls = event.target.closest("[data-table-controls]");
+    if (!tableControls) return;
+
+    var targetTableId = tableControls.getAttribute("data-table-controls");
+    if (!targetTableId) return;
+    var table = document.getElementById(targetTableId);
+    if (!table) return;
+
+    var selectAll = event.target.closest("[data-select-all]");
+    if (selectAll) {
+      var rowChecks = table.querySelectorAll("[data-row-select]");
+      for (var i = 0; i < rowChecks.length; i += 1) {
+        rowChecks[i].checked = selectAll.checked;
+      }
+      updateTableSelectionCount(tableControls, table);
+      return;
+    }
+
+    var colToggle = event.target.closest("[data-col-toggle]");
+    if (colToggle) {
+      var key = colToggle.getAttribute("data-col-toggle");
+      if (!key) return;
+      setColumnVisibility(table, key, colToggle.checked);
+      return;
+    }
+  });
+
+  document.addEventListener("change", function (event) {
+    var rowSelect = event.target.closest("[data-row-select]");
+    if (!rowSelect) return;
+    var table = rowSelect.closest("table");
+    if (!table || !table.id) return;
+    var controls = document.querySelector('[data-table-controls="' + table.id + '"]');
+    if (!controls) return;
+    updateTableSelectionCount(controls, table);
+  });
 })();

@@ -77,4 +77,12 @@
   .dropdown-menu > summary::-webkit-details-marker {
     display: none;
   }
+
+  .tab-btn {
+    @apply rounded-md border border-border bg-surface px-3 py-1.5 text-sm text-muted transition hover:text-text;
+  }
+
+  .tab-btn-active {
+    @apply border-brand bg-brand/10 text-text;
+  }
 }

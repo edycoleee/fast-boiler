@@ -192,6 +192,55 @@
     </article>
   </section>
 
+  <section class="mb-8 grid gap-4 md:grid-cols-2">
+    <article class="card">
+      <h2 class="mb-3 text-xl font-semibold">Navigation Components</h2>
+      {% set breadcrumb_items = [
+        {"label": "Home", "href": "/"},
+        {"label": "Admin", "href": "/admin"},
+        {"label": "News", "href": "/admin/news"},
+        {"label": "Create", "href": ""}
+      ] %}
+      {% include "components/navigation/_breadcrumb.html" %}
+
+      <div class="mt-4">
+        {% set tabs_id = "ds-navigation-tabs" %}
+        {% set tabs = [
+          {"label": "Overview", "title": "Overview", "description": "Ringkasan modul: total item, status, dan activity terbaru.", "active": true},
+          {"label": "Permissions", "title": "Permissions", "description": "Atur role access seperti news.manage, services.manage, dan logger.manage."},
+          {"label": "Automation", "title": "Automation", "description": "Kelola proses otomatis seperti retention cleanup dan job terjadwal."}
+        ] %}
+        {% include "components/navigation/_tabs.html" %}
+      </div>
+    </article>
+    <article class="card">
+      <h2 class="mb-3 text-xl font-semibold">Advanced Form Patterns</h2>
+      {% set date_range_id = "ds-date-range" %}
+      {% set date_range_label = "Publication Window" %}
+      {% set date_start_name = "publish_start" %}
+      {% set date_end_name = "publish_end" %}
+      {% set date_start_value = "2026-10-01" %}
+      {% set date_end_value = "2026-10-31" %}
+      {% set date_range_help = "Gunakan untuk filter rentang data atau jadwal publish." %}
+      {% include "components/forms/_date_range.html" %}
+
+      <div class="mt-4">
+        {% set multi_id = "ds-multi-select" %}
+        {% set multi_name = "target_channels" %}
+        {% set multi_label = "Target Channels" %}
+        {% set multi_options = [
+          {"value": "web", "label": "Website"},
+          {"value": "mobile", "label": "Mobile App"},
+          {"value": "email", "label": "Email Digest"},
+          {"value": "social", "label": "Social Media"}
+        ] %}
+        {% set multi_selected = ["web", "email"] %}
+        {% set multi_help = "Tekan Ctrl/Cmd untuk memilih lebih dari satu channel." %}
+        {% include "components/forms/_multi_select.html" %}
+      </div>
+    </article>
+  </section>
+
   <section class="mb-8 card">
     <h2 class="mb-3 text-xl font-semibold">Data Display Components</h2>
     <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
@@ -237,6 +286,57 @@
               {% set timeline_badge_class = "bg-amber-100 text-amber-700" %}
               {% include "components/data/_timeline_row.html" %}
             </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="mb-8 card">
+    <h2 class="mb-3 text-xl font-semibold">Advanced Table Utilities</h2>
+    {% set toolbar_title = "Bulk Action & Column Toggle" %}
+    {% set toolbar_description = "Contoh pola reusable untuk seleksi per halaman dan visibilitas kolom." %}
+    {% set table_id = "ds-table-utils" %}
+    {% set column_toggles = [
+      {"key": "title", "label": "Title", "visible": true},
+      {"key": "status", "label": "Status", "visible": true},
+      {"key": "updated", "label": "Updated", "visible": true},
+      {"key": "owner", "label": "Owner", "visible": false}
+    ] %}
+    {% include "components/data/_table_toolbar.html" %}
+
+    <div class="mt-4 overflow-x-auto rounded-lg border border-border">
+      <table id="ds-table-utils" class="min-w-full divide-y divide-border text-sm">
+        <thead class="bg-page">
+          <tr>
+            <th class="px-4 py-3 text-left font-semibold text-muted">Select</th>
+            <th class="px-4 py-3 text-left font-semibold text-muted" data-col="title">Title</th>
+            <th class="px-4 py-3 text-left font-semibold text-muted" data-col="status">Status</th>
+            <th class="px-4 py-3 text-left font-semibold text-muted" data-col="updated">Updated At</th>
+            <th class="px-4 py-3 text-left font-semibold text-muted" data-col="owner" hidden>Owner</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-border bg-surface">
+          <tr>
+            <td class="px-4 py-3"><input type="checkbox" data-row-select /></td>
+            <td class="px-4 py-3" data-col="title">Corporate Landing Revamp</td>
+            <td class="px-4 py-3" data-col="status">{{ render_status_badge("published") }}</td>
+            <td class="px-4 py-3 text-xs text-muted" data-col="updated">2026-10-07 14:20</td>
+            <td class="px-4 py-3 text-xs text-muted" data-col="owner" hidden>Team Web</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3"><input type="checkbox" data-row-select /></td>
+            <td class="px-4 py-3" data-col="title">Service Taxonomy Cleanup</td>
+            <td class="px-4 py-3" data-col="status">{{ render_status_badge("draft") }}</td>
+            <td class="px-4 py-3 text-xs text-muted" data-col="updated">2026-10-06 09:11</td>
+            <td class="px-4 py-3 text-xs text-muted" data-col="owner" hidden>Ops Content</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3"><input type="checkbox" data-row-select /></td>
+            <td class="px-4 py-3" data-col="title">Clinic Microsite Deployment</td>
+            <td class="px-4 py-3" data-col="status">{{ render_status_badge("archived") }}</td>
+            <td class="px-4 py-3 text-xs text-muted" data-col="updated">2026-10-05 18:42</td>
+            <td class="px-4 py-3 text-xs text-muted" data-col="owner" hidden>IT Infra</td>
           </tr>
         </tbody>
       </table>

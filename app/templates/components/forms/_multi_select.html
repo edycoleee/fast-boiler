@@ -1,0 +1,17 @@
+{% set multi_id = multi_id | default("multi-select") %}
+{% set multi_name = multi_name | default("multi_select") %}
+{% set multi_label = multi_label | default("Multi Select") %}
+{% set multi_options = multi_options | default([]) %}
+{% set multi_selected = multi_selected | default([]) %}
+{% set multi_help = multi_help | default("") %}
+<div>
+  <label class="mb-1 block text-sm font-medium" for="{{ multi_id }}">{{ multi_label }}</label>
+  <select id="{{ multi_id }}" name="{{ multi_name }}" multiple class="input-base min-h-28">
+    {% for option in multi_options %}
+      <option value="{{ option.value }}" {% if option.value in multi_selected %}selected{% endif %}>{{ option.label }}</option>
+    {% endfor %}
+  </select>
+  {% if multi_help %}
+    <p class="mt-1 text-xs text-muted">{{ multi_help }}</p>
+  {% endif %}
+</div>

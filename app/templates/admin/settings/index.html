@@ -5,6 +5,13 @@
   {% set page_title = "Site Settings" %}
   {% set page_description = "Atur identitas utama website agar konsisten di landing page dan halaman publik." %}
   {% include "components/marketing/_page_header.html" %}
+  {% set breadcrumb_items = [
+    {"label": "Admin", "href": "/admin"},
+    {"label": "Settings", "href": "/admin/settings"}
+  ] %}
+  <div class="mb-4">
+    {% include "components/navigation/_breadcrumb.html" %}
+  </div>
 
   {% if result == "updated" %}
     <div class="mb-4 rounded-lg border border-emerald-300 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">Pengaturan berhasil diperbarui.</div>
@@ -14,6 +21,16 @@
   {% endif %}
 
   <section class="card p-6">
+    <div class="mb-5">
+      {% set tabs_id = "settings-guidance-tabs" %}
+      {% set tabs = [
+        {"label": "Branding", "title": "Branding Guidance", "description": "Site Name dan Site Tagline muncul di landing/public pages, jadi jaga konsistensi tone brand.", "active": true},
+        {"label": "Contact", "title": "Contact Guidance", "description": "Contact Email dipakai sebagai titik kontak utama untuk integrasi form, footer, dan notifikasi."},
+        {"label": "Workflow", "title": "Update Workflow", "description": "Simpan perubahan dan verifikasi di halaman home/public agar update brand tampil sesuai ekspektasi."}
+      ] %}
+      {% include "components/navigation/_tabs.html" %}
+    </div>
+
     <form action="/admin/settings" method="post" class="space-y-5">
       <div>
         <label class="mb-1 block text-sm font-medium" for="site_name">Site Name</label>

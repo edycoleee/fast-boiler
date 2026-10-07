@@ -33,6 +33,8 @@ def test_design_system_page():
         response = client.get("/design-system")
         assert response.status_code == 200
         assert "UI Components and Theme Tokens" in response.text
+        assert "Navigation Components" in response.text
+        assert "Advanced Table Utilities" in response.text
 
 
 def test_news_detail_not_found_page():

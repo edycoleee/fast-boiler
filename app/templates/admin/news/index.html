@@ -5,6 +5,13 @@
   {% set page_title = "Manage News" %}
   {% set page_description = "Kelola artikel, status publikasi, dan operasi edit/delete secara konsisten." %}
   {% include "components/marketing/_page_header.html" %}
+  {% set breadcrumb_items = [
+    {"label": "Admin", "href": "/admin"},
+    {"label": "News", "href": "/admin/news"}
+  ] %}
+  <div class="mb-4">
+    {% include "components/navigation/_breadcrumb.html" %}
+  </div>
 
   {% if result == "created" %}
     <div class="mb-4 rounded-lg border border-emerald-300 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">News berhasil dibuat.</div>
@@ -20,7 +27,7 @@
     <div class="mb-4 flex flex-wrap items-center justify-between gap-3 border-b border-border pb-4">
       <div>
         <p class="text-sm font-medium text-text">News workspace</p>
-        <p class="text-xs text-muted">Gunakan filter untuk mengatur jumlah data dan lakukan aksi dari tabel di bawah.</p>
+        <p class="text-xs text-muted">Gunakan filter untuk mengatur jumlah data dan lakukan aksi dari tabel di bawah. Table utilities tersedia untuk seleksi dan visibilitas kolom.</p>
         <div id="news-resume-draft" class="mt-2 hidden rounded-md border border-blue-200 bg-blue-50 px-3 py-2 text-xs text-blue-800"></div>
       </div>
       <a href="/admin/news/new" class="btn-primary">+ Create News</a>
