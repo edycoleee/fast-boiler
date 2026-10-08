@@ -20,3 +20,12 @@ def canvas_index(request: Request, doc: str = Query(default="default")):
         name="admin/canvas/index.html",
         context={"initial_document_key": initial_document_key},
     )
+
+
+@router.get("/mode-2")
+def canvas_mode_2_index(request: Request):
+    return templates.TemplateResponse(
+        request=request,
+        name="admin/canvas/mode2.html",
+        context={},
+    )

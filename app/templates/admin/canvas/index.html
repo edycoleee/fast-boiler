@@ -4,6 +4,9 @@
   {% set page_title = "Canvas" %}
   {% set page_description = "Canvas 2D dengan panel properti, undo/redo, dan export PNG." %}
   {% include "components/marketing/_page_header.html" %}
+  <div class="mb-4">
+    <a href="/admin/canvas/mode-2" class="btn-outline">Open Canvas Mode 2 (512x512)</a>
+  </div>
 
   <div class="grid gap-4 xl:grid-cols-12">
     <section class="card xl:col-span-9 p-5">
@@ -61,6 +64,8 @@
             <div class="flex flex-wrap gap-2">
               <button id="export-canvas-json" type="button" class="btn-outline">Export JSON</button>
               <button id="import-canvas-json" type="button" class="btn-outline">Import JSON</button>
+              <button id="import-canvas-image" type="button" class="btn-outline">Import Image 512x512</button>
+              <input id="import-canvas-image-file" type="file" accept=".jpg,.jpeg,.png,.bmp,image/jpeg,image/png,image/bmp" class="hidden" />
               <button id="download-canvas" type="button" class="btn-primary">Download PNG</button>
             </div>
           </div>

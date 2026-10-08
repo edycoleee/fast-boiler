@@ -79,6 +79,12 @@ def test_login_and_access_admin_pages():
 
         canvas_response = client.get("/admin/canvas")
         assert canvas_response.status_code == 200
+        canvas_mode2_response = client.get("/admin/canvas/mode-2")
+        assert canvas_mode2_response.status_code == 200
+        assert "Regions JSON" in canvas_mode2_response.text
+        assert "Undo" in canvas_mode2_response.text
+        assert "Preview Region Only" in canvas_mode2_response.text
+        assert "Download Preview PNG" in canvas_mode2_response.text
 
         logger_response = client.get("/admin/logger")
         assert logger_response.status_code == 200
@@ -680,6 +686,38 @@ def test_canvas_api_save_and_load():
         assert data["document_key"] == "default"
         assert data["payload"]["background"] == "#fafafa"
         assert len(data["payload"]["items"]) == 1
+
+
+def test_canvas_api_save_and_load_with_image_item():
+    with TestClient(app) as client:
+        login_as_admin(client)
+        image_payload = {
+            "background": "#ffffff",
+            "items": [
+                {
+                    "id": "obj-image-1",
+                    "type": "image",
+                    "x": 10,
+                    "y": 20,
+                    "w": 512,
+                    "h": 512,
+                    "src": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2w==",
+                }
+            ],
+        }
+        save_response = client.put(
+            "/api/v1/canvas",
+            json={"document_key": "image-doc", "title": "Image Canvas", "payload": image_payload},
+        )
+        assert save_response.status_code == 200
+
+        load_response = client.get("/api/v1/canvas", params={"document_key": "image-doc"})
+        assert load_response.status_code == 200
+        data = load_response.json()["data"]
+        assert data is not None
+        assert data["payload"]["items"][0]["type"] == "image"
+        assert data["payload"]["items"][0]["w"] == 512
+        assert data["payload"]["items"][0]["h"] == 512
 
 
 def test_canvas_api_requires_login():

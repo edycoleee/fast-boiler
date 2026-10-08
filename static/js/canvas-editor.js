@@ -31,6 +31,8 @@
     var loadServerBtn = document.getElementById("load-canvas-server");
     var exportJsonBtn = document.getElementById("export-canvas-json");
     var importJsonBtn = document.getElementById("import-canvas-json");
+    var importImageBtn = document.getElementById("import-canvas-image");
+    var importImageFileEl = document.getElementById("import-canvas-image-file");
     var serverStatusEl = document.getElementById("canvas-server-status");
     var drawing = false;
     var startX = 0;
@@ -54,6 +56,7 @@
     var savingInProgress = false;
     var pendingAutoSave = false;
     var lastKnownUpdatedAt = null;
+    var imageCache = {};
 
     function cloneState(inputState) {
       return JSON.parse(JSON.stringify(inputState));
@@ -112,7 +115,70 @@
         item.id = createId();
       }
       if (item.type === "path" && !Array.isArray(item.points)) return null;
+      if (item.type === "image") {
+        if (typeof item.src !== "string" || !item.src) return null;
+        item.x = Number(item.x) || 0;
+        item.y = Number(item.y) || 0;
+        item.w = Math.max(1, Number(item.w) || 512);
+        item.h = Math.max(1, Number(item.h) || 512);
+      }
       return item;
+    }
+
+    function isAllowedImageFile(file) {
+      if (!file) return false;
+      var name = String(file.name || "").toLowerCase();
+      var type = String(file.type || "").toLowerCase();
+      var isAllowedExt = /\.(jpg|jpeg|png|bmp)$/.test(name);
+      var isAllowedMime = type === "image/jpeg" || type === "image/png" || type === "image/bmp";
+      return isAllowedExt || isAllowedMime;
+    }
+
+    function readFileAsDataUrl(file) {
+      return new Promise(function (resolve, reject) {
+        var reader = new FileReader();
+        reader.onload = function () {
+          resolve(String(reader.result || ""));
+        };
+        reader.onerror = function () {
+          reject(new Error("read-failed"));
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function loadImageFromDataUrl(dataUrl) {
+      return new Promise(function (resolve, reject) {
+        var image = new Image();
+        image.onload = function () {
+          resolve(image);
+        };
+        image.onerror = function () {
+          reject(new Error("image-load-failed"));
+        };
+        image.src = dataUrl;
+      });
+    }
+
+    async function resizeFileToDataUrl512(file) {
+      var sourceDataUrl = await readFileAsDataUrl(file);
+      var image = await loadImageFromDataUrl(sourceDataUrl);
+      var tempCanvas = document.createElement("canvas");
+      tempCanvas.width = 512;
+      tempCanvas.height = 512;
+      var tempCtx = tempCanvas.getContext("2d");
+      if (!tempCtx) throw new Error("canvas-not-supported");
+      tempCtx.fillStyle = "#ffffff";
+      tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+      tempCtx.drawImage(image, 0, 0, 512, 512);
+
+      var quality = 0.9;
+      var output = tempCanvas.toDataURL("image/jpeg", quality);
+      while (output.length > 100000 && quality > 0.35) {
+        quality -= 0.1;
+        output = tempCanvas.toDataURL("image/jpeg", quality);
+      }
+      return output;
     }
 
     function applyCanvasState(nextState, pushToHistory) {
@@ -328,6 +394,14 @@
         ctx.restore();
         return { x: item.x, y: item.y - (item.fontSize || 20), w: width, h: item.fontSize || 20 };
       }
+      if (item.type === "image") {
+        return {
+          x: Number(item.x) || 0,
+          y: Number(item.y) || 0,
+          w: Math.max(1, Number(item.w) || 512),
+          h: Math.max(1, Number(item.h) || 512)
+        };
+      }
       if (item.type === "path") {
         var minX = Infinity;
         var minY = Infinity;
@@ -397,6 +471,28 @@
         ctx.font = Math.max(10, item.fontSize || 20) + "px sans-serif";
         ctx.fillText(item.text || "", item.x, item.y);
         ctx.restore();
+        return;
+      }
+      if (item.type === "image") {
+        if (!item.src) return;
+        var cacheKey = String(item.id || item.src);
+        var cached = imageCache[cacheKey];
+        if (cached && cached.ready && cached.image) {
+          ctx.drawImage(cached.image, item.x, item.y, item.w, item.h);
+          return;
+        }
+        if (!cached) {
+          var img = new Image();
+          imageCache[cacheKey] = { image: img, ready: false };
+          img.onload = function () {
+            imageCache[cacheKey].ready = true;
+            render();
+          };
+          img.onerror = function () {
+            delete imageCache[cacheKey];
+          };
+          img.src = item.src;
+        }
         return;
       }
     }
@@ -514,6 +610,11 @@
 
     function resizeItem(item, startBounds, dx, dy) {
       if (item.type === "rect") {
+        item.w = Math.max(20, startBounds.w + dx);
+        item.h = Math.max(20, startBounds.h + dy);
+        return;
+      }
+      if (item.type === "image") {
         item.w = Math.max(20, startBounds.w + dx);
         item.h = Math.max(20, startBounds.h + dy);
         return;
@@ -688,6 +789,11 @@
         if (!Number.isNaN(nextH)) item.h = Math.max(20, nextH);
       }
 
+      if (item.type === "image") {
+        if (!Number.isNaN(nextW)) item.w = Math.max(20, nextW);
+        if (!Number.isNaN(nextH)) item.h = Math.max(20, nextH);
+      }
+
       if (item.type === "text") {
         item.text = nextText || item.text;
       } else if (item.type === "path") {
@@ -799,6 +905,42 @@
         setServerStatus("JSON tidak valid.", "error");
       }
     });
+
+    if (importImageBtn && importImageFileEl) {
+      importImageBtn.addEventListener("click", function () {
+        importImageFileEl.click();
+      });
+
+      importImageFileEl.addEventListener("change", async function () {
+        var file = importImageFileEl.files && importImageFileEl.files[0] ? importImageFileEl.files[0] : null;
+        importImageFileEl.value = "";
+        if (!file) return;
+        if (!isAllowedImageFile(file)) {
+          setServerStatus("Format gambar harus JPG, PNG, atau BMP.", "error");
+          return;
+        }
+        try {
+          setServerStatus("Memproses gambar 512x512...", "default");
+          var dataUrl = await resizeFileToDataUrl512(file);
+          var item = {
+            id: createId(),
+            type: "image",
+            x: Math.max(0, Math.round((canvas.width - 512) / 2)),
+            y: Math.max(0, Math.round((canvas.height - 512) / 2)),
+            w: 512,
+            h: 512,
+            src: dataUrl
+          };
+          state.items.push(item);
+          selectedId = item.id;
+          pushHistory();
+          render();
+          setServerStatus("Gambar berhasil diimport ke canvas (512x512).", "success");
+        } catch (error) {
+          setServerStatus("Gagal memproses gambar.", "error");
+        }
+      });
+    }
 
     canvas.addEventListener("dblclick", function (e) {
       if (toolEl.value !== "select") return;

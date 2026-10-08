@@ -173,7 +173,8 @@ Server-side canvas API (save/load JSON):
 - `PATCH /api/v1/canvas` (rename key + update title)
 - `DELETE /api/v1/canvas?document_key=...`
 
-Canvas admin (`/admin/canvas`) sekarang mendukung multi-document per user, autosave debounce ke server, export/import JSON, manual load/save, rename, dan delete dokumen.
+Canvas admin (`/admin/canvas`) sekarang mendukung multi-document per user, autosave debounce ke server, export/import JSON, import gambar JPG/PNG/BMP (otomatis resize 512x512), manual load/save, rename, dan delete dokumen.
+Untuk mode minimal, tersedia halaman terpisah `/admin/canvas/mode-2` dengan kanvas tetap 512x512, fokus import gambar dan download PNG, plus free drawing region (polygon) di atas canvas dengan output koordinat titik (points) dan bounds dalam JSON di card bawah. Mode ini juga menyediakan tombol Undo untuk membatalkan aksi terakhir, tombol Preview Region Only untuk menghasilkan canvas region tanpa gambar background, dan Download Preview PNG untuk mengekspor mask 512x512 (dalam region hitam, luar region putih).
 Autosave canvas juga dilindungi conflict guard (HTTP 409) agar perubahan lama dari tab/device lain tidak menimpa versi terbaru tanpa konfirmasi.
 
 Audit fields:

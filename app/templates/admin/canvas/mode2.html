@@ -1,0 +1,59 @@
+{% extends "layouts/admin.html" %}
+{% block title %}Canvas Mode 2{% endblock %}
+{% block content %}
+  {% set page_eyebrow = "Canvas" %}
+  {% set page_title = "Canvas Mode 2 (512x512)" %}
+  {% set page_description = "Halaman canvas minimal khusus 512x512 untuk import gambar JPG/PNG/BMP." %}
+  {% include "components/marketing/_page_header.html" %}
+
+  {% set breadcrumb_items = [
+    {"label": "Admin", "href": "/admin"},
+    {"label": "Canvas", "href": "/admin/canvas"},
+    {"label": "Mode 2", "href": ""}
+  ] %}
+  <div class="mb-4">
+    {% include "components/navigation/_breadcrumb.html" %}
+  </div>
+
+  <section class="card p-5">
+    <div class="mb-4 flex flex-wrap gap-2">
+      <button id="mode2-import-btn" type="button" class="btn-primary">Import Image</button>
+      <input id="mode2-import-file" type="file" accept=".jpg,.jpeg,.png,.bmp,image/jpeg,image/png,image/bmp" class="hidden" />
+      <button id="mode2-undo-btn" type="button" class="btn-outline">Undo</button>
+      <button id="mode2-preview-btn" type="button" class="btn-outline">Preview Region Only</button>
+      <button id="mode2-clear-btn" type="button" class="btn-outline">Clear</button>
+      <button id="mode2-clear-regions-btn" type="button" class="btn-outline">Clear Regions</button>
+      <button id="mode2-download-btn" type="button" class="btn-outline">Download PNG</button>
+      <a href="/admin/canvas" class="btn-outline">Back to Full Canvas</a>
+    </div>
+
+    <p id="mode2-status" class="mb-2 text-xs text-muted">Canvas siap. Import gambar untuk menampilkan di area 512x512.</p>
+    <p class="mb-3 text-xs text-muted">Setelah gambar tampil, klik-tahan lalu gerakkan mouse untuk free drawing region (polygon).</p>
+
+    <div class="overflow-auto rounded-lg border border-border bg-page p-3">
+      <canvas id="mode2-canvas" width="512" height="512" class="block rounded border border-border bg-white"></canvas>
+    </div>
+
+    <div class="mt-4">
+      <p class="mb-2 text-xs text-muted">Preview canvas di bawah menampilkan mask region 512x512 (dalam region hitam, luar region putih).</p>
+      <div class="overflow-auto rounded-lg border border-border bg-page p-3">
+        <canvas id="mode2-preview-canvas" width="512" height="512" class="block rounded border border-border bg-white"></canvas>
+      </div>
+      <div class="mt-2">
+        <button id="mode2-preview-download-btn" type="button" class="btn-outline">Download Preview PNG</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="card mt-4 p-5">
+    <div class="mb-2 flex items-center justify-between gap-2">
+      <h2 class="text-sm font-semibold uppercase tracking-wide text-muted">Regions JSON (Free Draw)</h2>
+      <button id="mode2-copy-json-btn" type="button" class="btn-outline">Copy JSON</button>
+    </div>
+    <pre id="mode2-regions-json" class="overflow-auto rounded-lg border border-border bg-page p-3 text-xs text-text">[]</pre>
+  </section>
+{% endblock %}
+
+{% block extra_scripts %}
+  <script defer src="/static/js/canvas-mode2.js"></script>
+{% endblock %}
