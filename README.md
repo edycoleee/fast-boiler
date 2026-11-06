@@ -42,7 +42,7 @@ Reusable FastAPI boilerplate with modular monolith structure and PRG + HTMX + st
 
 ## Menggunakan boilerplate ini untuk repo GitHub project lain
 
-Ada 2 cara:
+Ada 3 cara:
 
 ### 1) Jadikan repo ini sebagai Template (disarankan)
 1. Buka repo di GitHub → **Settings** → **General**.
@@ -70,6 +70,28 @@ rm -rf .git
 git init -b main
 git add .
 git commit -m "Initial commit from boilerplate"
+git remote add origin https://github.com/USERNAME/NAMA-REPO-BARU.git
+git push -u origin main
+```
+
+### 3) Clone boilerplate lalu jadikan project baru (fresh history)
+
+Gunakan cara ini jika Anda ingin copy isi boilerplate ke folder baru project:
+
+```bash
+# 1) clone boilerplate
+git clone https://github.com/edycoleee/fast-boiler.git nama-project-baru
+cd nama-project-baru
+
+# 2) hapus histori git lama
+rm -rf .git
+
+# 3) inisialisasi repo baru
+git init -b main
+git add .
+git commit -m "Initial commit from boilerplate"
+
+# 4) hubungkan ke repo GitHub project baru
 git remote add origin https://github.com/USERNAME/NAMA-REPO-BARU.git
 git push -u origin main
 ```
