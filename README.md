@@ -40,6 +40,45 @@ Reusable FastAPI boilerplate with modular monolith structure and PRG + HTMX + st
    - Login: `/auth/login` (default: `admin` / `admin123`)
    - API docs: `/docs`
 
+## Menggunakan boilerplate ini untuk repo GitHub project lain
+
+Ada 2 cara:
+
+### 1) Jadikan repo ini sebagai Template (disarankan)
+1. Buka repo di GitHub → **Settings** → **General**.
+2. Centang **Template repository**.
+3. Klik **Use this template**.
+4. Buat repository baru sesuai nama project Anda.
+5. Clone repository baru tersebut dan mulai development.
+
+Kelebihan:
+- Setup cepat dan rapi.
+- Cocok untuk membuat banyak project turunan dari boilerplate ini.
+
+### 2) Push code lokal ini ke repository baru
+
+#### a. Jika histori commit lama ingin dipertahankan
+```bash
+git remote remove origin
+git remote add origin https://github.com/USERNAME/NAMA-REPO-BARU.git
+git push -u origin main
+```
+
+#### b. Jika ingin histori baru dari nol (fresh history)
+```bash
+rm -rf .git
+git init -b main
+git add .
+git commit -m "Initial commit from boilerplate"
+git remote add origin https://github.com/USERNAME/NAMA-REPO-BARU.git
+git push -u origin main
+```
+
+Setelah itu, sesuaikan konfigurasi project baru:
+- Copy `.env.example` menjadi `.env`
+- Ubah nilai seperti `APP_NAME`, `DB_URL`, `SECRET_KEY`, dan variabel lain sesuai environment project baru
+- Jalankan kembali langkah di bagian **Quick start**
+
 ## 🔶 Highlight: Penyimpanan Draft & Manajemen Draft
 
 > Fitur ini dirancang agar input admin **tetap aman** saat session expire, browser tertutup, atau user pindah device.
