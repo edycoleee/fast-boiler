@@ -1,4 +1,4 @@
-# Fast Boiler
+# Fast Boiler Update
 
 Reusable FastAPI boilerplate with modular monolith structure and PRG + HTMX + standard API response flow.
 
